@@ -18,15 +18,15 @@ using System.Data;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
-using NLog;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Reflection;
+using NLog;
 
 namespace Websbor_PasswordRespondents
 {    
     public partial class MainWindow : Window
-    {
+    {        
         string connectionString;
         DataTable tableRespondents;
         string sqlQueryGetAllData = "SELECT * FROM [Password]";
