@@ -1,0 +1,12 @@
+﻿<Window x:Class="Websbor_PasswordRespondents.ProgressBarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Websbor_PasswordRespondents"
+        mc:Ignorable="d"
+        Title="ProgressBarWindow" Height="233.102" Width="500.831">
+    <Grid>
+        <ProgressBar HorizontalAlignment="Left" Height="35" Margin="10,85,0,0" VerticalAlignment="Top" Width="473" Minimum="0" Maximum="100"/>
+    </Grid>
+</Window>

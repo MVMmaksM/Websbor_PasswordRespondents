@@ -1,0 +1,60 @@
+﻿<Window x:Class="Websbor_PasswordRespondents.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Websbor_PasswordRespondents"
+        mc:Ignorable="d"
+        Title="Настройки" Height="422.873" Width="500" ResizeMode="NoResize" Background="#FFAAA9A9">
+    <Grid>
+        <TabControl Margin="0,0,0,75">
+            <TabItem Header="Подключение к БД">
+                <Grid>
+                    <Label HorizontalAlignment="Left" Margin="10,41,0,0" Content="Data Source" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="112" Height="26"/>
+                    <Label HorizontalAlignment="Left" Margin="10,72,0,0"  Content="Initial Catalog" VerticalAlignment="Top" Width="112" Height="26" VerticalContentAlignment="Center"/>
+                    <Label HorizontalAlignment="Left" Margin="10,103,0,0"  Content="Integrated Security" VerticalAlignment="Top" Width="112" Height="26" VerticalContentAlignment="Center"/>
+                    <Label HorizontalAlignment="Left" Margin="10,134,0,0" Content="ProviderName" VerticalAlignment="Top" Width="112" Height="26" VerticalContentAlignment="Center"/>
+                    <Label HorizontalAlignment="Left" Margin="10,10,0,0" Content="Name Connection String Settings" VerticalAlignment="Top" Width="189" Height="26" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="TxtBoxDataSorce" HorizontalAlignment="Left" Height="26" Margin="204,41,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="TxtBoxInitCatalog" HorizontalAlignment="Left" Height="26" Margin="204,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="TxtBoxProviderName" HorizontalAlignment="Left" Height="26" Margin="204,134,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
+                    <Label x:Name="TxtBoxConStrSetName" HorizontalAlignment="Left" Height="26" Margin="204,10,0,0"  Content="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
+                    <ComboBox Name="CmBxIntegratredSecurity" Margin="204,104,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="265">
+                        <TextBlock>True</TextBlock>
+                        <TextBlock>False</TextBlock>
+                    </ComboBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Интерфейс">
+                <Grid>
+                    <Label Content="Изменять высоту строк" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top" Width="170"/>
+                    <ComboBox x:Name="CmBxCanResizeRowHeader" HorizontalAlignment="Left" Margin="208,20,0,0" VerticalAlignment="Top" Width="120" Height="26">
+                        <TextBlock>True</TextBlock>
+                        <TextBlock>False</TextBlock>
+                    </ComboBox>
+                    <Label Content="Изменять ширину столбцов" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="170"/>
+                    <ComboBox x:Name="CmBxCanResizeColumnWidth" HorizontalAlignment="Left" Margin="208,60,0,0" VerticalAlignment="Top" Width="120" Height="26">
+                        <TextBlock>True</TextBlock>
+                        <TextBlock>False</TextBlock>
+                    </ComboBox>
+                    <Label Content="Изменять порядок столбцов" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top" Width="170"/>
+                    <ComboBox x:Name="CmBxCanUserReorderColumns" HorizontalAlignment="Left" Margin="208,101,0,0" VerticalAlignment="Top" Width="120" Height="26">
+                        <TextBlock>True</TextBlock>
+                        <TextBlock>False</TextBlock>
+                    </ComboBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Button x:Name="Btn_SaveSettings" Content="Сохранить" Margin="0,0,330,34" Click="Btn_SaveSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
+            <Button.Effect>
+                <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
+            </Button.Effect>
+        </Button>
+        <Button x:Name="Btn_CancelSettings" Content="Отмена" Margin="304,0,0,34" Click="Btn_CancelSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
+            <Button.Effect>
+                <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
+            </Button.Effect>
+        </Button>
+        <StatusBar Height="20" VerticalAlignment="Bottom"/>        
+    </Grid>
+</Window>
