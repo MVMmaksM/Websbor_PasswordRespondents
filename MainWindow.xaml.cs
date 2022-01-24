@@ -117,7 +117,7 @@ namespace Websbor_PasswordRespondents
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.StackTrace);
+                logger.Error(ex.Message + ex.StackTrace);
             }
             finally
             {
@@ -137,8 +137,7 @@ namespace Websbor_PasswordRespondents
                 connection = new SqlConnection(connectionString);
 
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                sqlDataAdapter.Update(tableRespondents);
-
+                sqlDataAdapter.Update(tableRespondents);               
             }
             catch (Exception ex)
             {
@@ -229,7 +228,7 @@ namespace Websbor_PasswordRespondents
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message + "\nсм.log-файл", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                logger.Error(ex.Message);
+                logger.Error(ex.Message + ex.Message);
             }
         }
         void ReadTextFile(string pathFile)
@@ -280,7 +279,7 @@ namespace Websbor_PasswordRespondents
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message);
+                logger.Error(ex.Message + ex.Message);
             }
             finally
             {
@@ -297,10 +296,14 @@ namespace Websbor_PasswordRespondents
             {
                 try
                 {
+                    logger.Info("[Получение SchemaTableRespondents]");
+
                     connection = new SqlConnection(connectionString);
                     sqlCommand = connection.CreateCommand();
                     sqlCommand.CommandText = "SELECT* FROM [Password]";
-                    sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                    sqlDataAdapter = new SqlDataAdapter();
+                    sqlDataAdapter.SelectCommand = sqlCommand;
+                    sqlDataAdapter.InsertCommand = new SqlCommand("sp_InsertPhone");
                     tableRespondents = new DataTable();
                     sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);
 
@@ -309,6 +312,7 @@ namespace Websbor_PasswordRespondents
                 catch (Exception ex)
                 {
                     System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                    logger.Error(ex.Message + ex.StackTrace);
                 }
                 finally
                 {
@@ -322,24 +326,40 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (dgDataPasswords.SelectedItems != null)
+            try
             {
-                for (int i = 0; i < dgDataPasswords.SelectedItems.Count; i++)
+                if (dgDataPasswords.SelectedItems != null)
                 {
-                    DataRowView datarowView = dgDataPasswords.SelectedItems[i] as DataRowView;
-                    if (datarowView != null)
+                    for (int i = 0; i < dgDataPasswords.SelectedItems.Count; i++)
                     {
-                        DataRow dataRow = (DataRow)datarowView.Row;
-                        dataRow.Delete();
+                        DataRowView datarowView = dgDataPasswords.SelectedItems[i] as DataRowView;
+                        if (datarowView != null)
+                        {
+                            DataRow dataRow = (DataRow)datarowView.Row;
+                            dataRow.Delete();
+                        }
                     }
+                }
+
+                using (connection = new SqlConnection(connectionString))
+                {
+                    SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);                    
+                    sqlDataAdapter.Update(tableRespondents);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message + ex.StackTrace);
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
                 }
             }
 
-            using (connection = new SqlConnection(connectionString))
-            {
-                SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                sqlDataAdapter.Update(tableRespondents);
-            }
         }
 
         private void dgDataPasswords_LoadingRow(object sender, DataGridRowEventArgs e)
