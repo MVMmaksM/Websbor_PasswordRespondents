@@ -144,6 +144,8 @@ namespace Websbor_PasswordRespondents
             sheet.Cells[1, 1, 1, 5].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
             sheet.Cells[1, 1, 1, 5].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
             sheet.Cells[1, 1, 1, 5].Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+            sheet.Columns[1,5].Style.Numberformat.Format = "@";
+            
 
 
             return package.GetAsByteArray();

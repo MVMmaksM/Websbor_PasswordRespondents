@@ -24,9 +24,9 @@ using System.Reflection;
 using NLog;
 
 namespace Websbor_PasswordRespondents
-{    
+{
     public partial class MainWindow : Window
-    {        
+    {
         string connectionString;
         DataTable tableRespondents;
         string sqlQueryGetAllData = "SELECT * FROM [Password]";
@@ -134,16 +134,23 @@ namespace Websbor_PasswordRespondents
 
             try
             {
-                using (connection = new SqlConnection(connectionString))
-                {
-                    SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                    sqlDataAdapter.Update(tableRespondents);
-                }
+                connection = new SqlConnection(connectionString);
+
+                SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
+                sqlDataAdapter.Update(tableRespondents);
+
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.StackTrace);
+                logger.Error(ex.Message + ex.StackTrace);
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
             }
         }
 
