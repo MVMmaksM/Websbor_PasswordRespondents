@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Учетки респондентов" Height="430" Width="617" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="NoResize">
     <Grid>
-        <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Loaded="dgDataPasswords_Loaded" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow" >
+        <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Loaded="dgDataPasswords_Loaded" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="13"/>

@@ -27,7 +27,7 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonSaveUser_Click(object sender, RoutedEventArgs e)
         {
-            if (TxtBoxUserName.Text != string.Empty) // сделать рег выражения проверку на пустую строку с пробелами
+            if (!string.IsNullOrWhiteSpace(TxtBoxUserName.Text)) 
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {

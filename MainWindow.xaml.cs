@@ -54,7 +54,7 @@ namespace Websbor_PasswordRespondents
 
         private bool DbUserExist()
         {
-            logger.Info("[Вызов метода DbUserExist]");
+            logger.Info($"[Вызов метода DbUserExist] : Пользователь {userName}");
             try
             {
                 using (SqlConnection connectionDboUser = new SqlConnection(connectionString))
@@ -94,7 +94,7 @@ namespace Websbor_PasswordRespondents
                 dgDataPasswords.IsEnabled = false;
 
                 System.Windows.MessageBox.Show($"При подключении к dbo.Users возникла ошибка: {ex.Message} \n\nсм. log-файл ", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.StackTrace);
+                logger.Error(ex.Message + ex.StackTrace);
 
                 return false;
             }
@@ -104,15 +104,12 @@ namespace Websbor_PasswordRespondents
         {
             logger.Info("[Вызов метода GetDataDB]");
             try
-            {
-                connection = new SqlConnection(connectionString);
-                sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = command;
-                sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-                tableRespondents = new DataTable();
-                sqlDataAdapter.Fill(tableRespondents);
-
-                dgDataPasswords.ItemsSource = tableRespondents.DefaultView;
+            { 
+                SqlCommand sqlCommandGetData = connection.CreateCommand();
+                sqlCommandGetData.CommandText = command;
+                SqlDataAdapter sqlGetDataDataAdapter = new SqlDataAdapter(sqlCommandGetData);
+                tableRespondents.Clear();
+                sqlGetDataDataAdapter.Fill(tableRespondents);                                
             }
             catch (Exception ex)
             {
@@ -133,11 +130,9 @@ namespace Websbor_PasswordRespondents
             logger.Info("[Вызов метода UpdateDB]");
 
             try
-            {
-                connection = new SqlConnection(connectionString);
-
+            {              
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                sqlDataAdapter.Update(tableRespondents);               
+                sqlDataAdapter.Update(tableRespondents);
             }
             catch (Exception ex)
             {
@@ -301,12 +296,25 @@ namespace Websbor_PasswordRespondents
                     connection = new SqlConnection(connectionString);
                     sqlCommand = connection.CreateCommand();
                     sqlCommand.CommandText = "SELECT* FROM [Password]";
+                    
                     sqlDataAdapter = new SqlDataAdapter();
+                    sqlDataAdapter.UpdateBatchSize = 50; // ???
                     sqlDataAdapter.SelectCommand = sqlCommand;
-                    sqlDataAdapter.InsertCommand = new SqlCommand("sp_InsertPhone");
-                    tableRespondents = new DataTable();
-                    sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);
 
+                    sqlDataAdapter.InsertCommand = new SqlCommand("sp_InsertPassword");
+                    sqlDataAdapter.InsertCommand.CommandType = CommandType.StoredProcedure;
+                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
+                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
+                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
+                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@datecreate", SqlDbType.NVarChar, 15, "datecreate"));
+                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
+                    SqlParameter parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
+                    parameter.Direction = ParameterDirection.Output;
+
+
+                    tableRespondents = new DataTable();
+                    sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);                    
+                    
                     dgDataPasswords.ItemsSource = tableRespondents.DefaultView;
                 }
                 catch (Exception ex)
@@ -339,13 +347,10 @@ namespace Websbor_PasswordRespondents
                             dataRow.Delete();
                         }
                     }
-                }
-
-                using (connection = new SqlConnection(connectionString))
-                {
-                    SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);                    
-                    sqlDataAdapter.Update(tableRespondents);
-                }
+                }                
+                    
+                SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);                    
+                sqlDataAdapter.Update(tableRespondents);                
             }
             catch (Exception ex)
             {
@@ -369,17 +374,17 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonGetAllData_Click(object sender, RoutedEventArgs e)
         {
-            GetDataDB(sqlQueryGetAllData);
+            GetDataDB(sqlQueryGetAllData);         
         }
 
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
 
-            if (RadioButtonOKPO.IsChecked == true)
+            if (RadioButtonOKPO.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
             {
                 GetDataDB($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
             }
-            else if (RadioButtonName.IsChecked == true)
+            else if (RadioButtonName.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
             {
                 GetDataDB($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
             }
@@ -497,7 +502,7 @@ namespace Websbor_PasswordRespondents
             if (e.Key == Key.Enter)
             {
                 if (RadioButtonOKPO.IsChecked == true)
-                {
+                {                    
                     GetDataDB($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
                 }
                 else if (RadioButtonName.IsChecked == true)
@@ -553,24 +558,18 @@ namespace Websbor_PasswordRespondents
             {
                 if (System.Windows.MessageBox.Show("Удалить все записи в таблице?", "Сообщение", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
                 {
-                    using (connection = new SqlConnection(connectionString))
+                    tableRespondents.Clear();
+
+                    using (SqlConnection connectionDeleteAll = new SqlConnection(connectionString))
                     {
-                        SqlCommand sqlCommand = new SqlCommand(sqlQueryDeleteTable, connection);
-                        connection.Open();
+                        SqlCommand sqlCommand = new SqlCommand(sqlQueryDeleteTable, connectionDeleteAll);
+                        connectionDeleteAll.Open();
                         count = sqlCommand.ExecuteNonQuery();
-                        connection.Close();
+                        connectionDeleteAll.Close();
                     }
 
-                    System.Windows.MessageBox.Show($"Удалено записей: {count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    tableRespondents = new DataTable();
-                    dgDataPasswords.ItemsSource = tableRespondents.DefaultView;
-                }
-
-                if (connection.State == ConnectionState.Open)
-                {
-                    connection.Close();
-                }
+                    System.Windows.MessageBox.Show($"Удалено записей: {count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);                                     
+                }                
             }
             catch (Exception ex)
             {
@@ -622,6 +621,7 @@ namespace Websbor_PasswordRespondents
             windowAddUSer.Owner = this;
             windowAddUSer.Show();
         }
+
     }
 }
 
