@@ -622,6 +622,13 @@ namespace Websbor_PasswordRespondents
             windowAddUSer.Show();
         }
 
+        private void ButtonClearDatagrid_Click(object sender, RoutedEventArgs e)
+        {
+            if (tableRespondents.Rows.Count!=0)
+            {
+                tableRespondents.Clear();
+            }
+        }
     }
 }
 
