@@ -8,6 +8,9 @@
         Title="Учетки респондентов" Height="430" Width="617" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="NoResize">
     <Grid>
         <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Loaded="dgDataPasswords_Loaded" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#e8a725"/>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="13"/>
@@ -24,6 +27,11 @@
                     </TextBox.Effect>
                 </TextBox>
                 <Button x:Name="ButtonSearch" Content="Найти" VerticalAlignment="Center"  Click="ButtonSearch_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="197,25,0,3" HorizontalAlignment="Left" Width="75">
+                    <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="2"/>
+                    </Style>
+                    </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
@@ -59,21 +67,41 @@
         <GroupBox x:Name="GroupBoxRedact" Header="Редактирование" HorizontalAlignment="Left" Margin="10,0,0,30" Width="281" Height="71" VerticalAlignment="Bottom">
             <Grid>
                 <Button x:Name="ButtonUpdate" Content="Сохранить" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Constantia" Width="75" Click="ButtonUpdate_Click" Height="20" Background="#FFF0F0F0" Margin="10,0,0,0">
+                    <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="2"/>
+                    </Style>
+                    </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
                 <Button x:Name="ButtonGetAllData" Content="Показать все записи" HorizontalAlignment="Left" VerticalAlignment="Top" Width="129" Click="ButtonGetAllData_Click" Height="20" FontFamily="Constantia" Background="#FFF0F0F0" Margin="130,0,0,0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                        </Style>
+                    </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
                 <Button x:Name="ButtonDelete" Content="Удалить" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="ButtonDelete_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="10,28,0,0">
+                    <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="2"/>
+                    </Style>
+                    </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
                 <Button x:Name="ButtonClearDataGrid" Content="Очистить список" HorizontalAlignment="Left" VerticalAlignment="Top" Width="129" Click="ButtonClearDatagrid_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="130,28,0,0">
+                    <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="2"/>
+                    </Style>
+                    </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>

@@ -6,4 +6,8 @@
 Исправлены ошибки инициализации строк подключения ConnectionString 
 
 [buil4]
-Добавлена кнопка очистки списка (DataTable tableRespondents) 
+Добавлена кнопка очистки списка (DataTable tableRespondents)
+
+[build 5]
+Изменен цвет строки выделения записи в Datagrid
+Закругление кнопок
