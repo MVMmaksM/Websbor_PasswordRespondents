@@ -7,9 +7,14 @@
         mc:Ignorable="d"
         Title="Добавление пользователя" Height="209.72" Width="347.507" Background="#FFAAA9A9" ResizeMode="NoResize">
     <Grid>
-        <Label HorizontalAlignment="Left" Margin="63,30,0,0" Content="Введите имя пользователя" VerticalAlignment="Top" Width="196" Height="30" HorizontalContentAlignment="Center"/>
-        <TextBox x:Name="TxtBoxUserName" HorizontalAlignment="Left" Height="23" Margin="83,76,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="156"/>
-        <Button Content="Сохранить" HorizontalAlignment="Left" Margin="129,116,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSaveUser_Click" Background="#FFF0F0F0" FontFamily="Constantia">
+        <Label Content="Введите имя пользователя" VerticalAlignment="Top" Height="30" HorizontalContentAlignment="Center" Margin="74,29,72,0"/>
+        <TextBox x:Name="TxtBoxUserName" HorizontalAlignment="Center" Height="23"  TextWrapping="Wrap" Text=""  Width="156"/>
+        <Button Content="Сохранить" Click="ButtonSaveUser_Click" Background="#FFF0F0F0" FontFamily="Constantia" Margin="137,118,130,0" Height="20" VerticalAlignment="Top">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2"/>
+                </Style>
+            </Button.Resources>
             <Button.Effect>
                 <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
             </Button.Effect>

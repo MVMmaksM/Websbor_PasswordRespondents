@@ -46,15 +46,25 @@
             </TabItem>
         </TabControl>
         <Button x:Name="Btn_SaveSettings" Content="Сохранить" Margin="0,0,330,34" Click="Btn_SaveSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2"/>
+                </Style>
+            </Button.Resources>
             <Button.Effect>
                 <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
             </Button.Effect>
         </Button>
         <Button x:Name="Btn_CancelSettings" Content="Отмена" Margin="304,0,0,34" Click="Btn_CancelSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2"/>
+                </Style>                
+            </Button.Resources>
             <Button.Effect>
                 <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
             </Button.Effect>
         </Button>
-        <StatusBar Height="20" VerticalAlignment="Bottom"/>        
+        <StatusBar Height="20" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

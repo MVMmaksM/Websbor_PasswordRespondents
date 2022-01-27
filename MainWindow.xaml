@@ -9,7 +9,7 @@
     <Grid>
         <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Loaded="dgDataPasswords_Loaded" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
             <DataGrid.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#e8a725"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#eb9534"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
@@ -28,9 +28,9 @@
                 </TextBox>
                 <Button x:Name="ButtonSearch" Content="Найти" VerticalAlignment="Center"  Click="ButtonSearch_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="197,25,0,3" HorizontalAlignment="Left" Width="75">
                     <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                        </Style>
                     </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
@@ -68,9 +68,9 @@
             <Grid>
                 <Button x:Name="ButtonUpdate" Content="Сохранить" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Constantia" Width="75" Click="ButtonUpdate_Click" Height="20" Background="#FFF0F0F0" Margin="10,0,0,0">
                     <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                        </Style>
                     </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
@@ -88,9 +88,9 @@
                 </Button>
                 <Button x:Name="ButtonDelete" Content="Удалить" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="ButtonDelete_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="10,28,0,0">
                     <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                        </Style>
                     </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
@@ -98,9 +98,9 @@
                 </Button>
                 <Button x:Name="ButtonClearDataGrid" Content="Очистить список" HorizontalAlignment="Left" VerticalAlignment="Top" Width="129" Click="ButtonClearDatagrid_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="130,28,0,0">
                     <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                        </Style>
                     </Button.Resources>
                     <Button.Effect>
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
