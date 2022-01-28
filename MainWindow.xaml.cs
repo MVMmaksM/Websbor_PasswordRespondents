@@ -38,6 +38,7 @@ namespace Websbor_PasswordRespondents
         SqlCommand sqlCommand;
         string userName;
         Version version;
+        private DBWork dataBaseWork;
 
         public MainWindow()
         {
@@ -104,12 +105,12 @@ namespace Websbor_PasswordRespondents
         {
             logger.Info("[Вызов метода GetDataDB]");
             try
-            { 
+            {
                 SqlCommand sqlCommandGetData = connection.CreateCommand();
                 sqlCommandGetData.CommandText = command;
                 SqlDataAdapter sqlGetDataDataAdapter = new SqlDataAdapter(sqlCommandGetData);
                 tableRespondents.Clear();
-                sqlGetDataDataAdapter.Fill(tableRespondents);                                
+                sqlGetDataDataAdapter.Fill(tableRespondents);
             }
             catch (Exception ex)
             {
@@ -130,9 +131,11 @@ namespace Websbor_PasswordRespondents
             logger.Info("[Вызов метода UpdateDB]");
 
             try
-            {              
+            {
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                sqlDataAdapter.Update(tableRespondents);
+
+                //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();                
+                sqlDataAdapter.Update(tableRespondents);     
             }
             catch (Exception ex)
             {
@@ -146,7 +149,7 @@ namespace Websbor_PasswordRespondents
                     connection.Close();
                 }
             }
-        }
+        }     
 
         private void LoadFile()
         {
@@ -287,49 +290,66 @@ namespace Websbor_PasswordRespondents
         }
         private void dgDataPasswords_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DbUserExist())
+            dataBaseWork = new DBWork(connectionString);
+
+            if (dataBaseWork.DbUserExist())
             {
-                try
-                {
-                    logger.Info("[Получение SchemaTableRespondents]");
-
-                    connection = new SqlConnection(connectionString);
-                    sqlCommand = connection.CreateCommand();
-                    sqlCommand.CommandText = "SELECT* FROM [Password]";
-                    
-                    sqlDataAdapter = new SqlDataAdapter();
-                    sqlDataAdapter.UpdateBatchSize = 50; // ???
-                    sqlDataAdapter.SelectCommand = sqlCommand;
-
-                    sqlDataAdapter.InsertCommand = new SqlCommand("sp_InsertPassword");
-                    sqlDataAdapter.InsertCommand.CommandType = CommandType.StoredProcedure;
-                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
-                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
-                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
-                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@datecreate", SqlDbType.NVarChar, 15, "datecreate"));
-                    sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
-                    SqlParameter parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
-                    parameter.Direction = ParameterDirection.Output;
-
-
-                    tableRespondents = new DataTable();
-                    sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);                    
-                    
-                    dgDataPasswords.ItemsSource = tableRespondents.DefaultView;
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                    logger.Error(ex.Message + ex.StackTrace);
-                }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                    {
-                        connection.Close();
-                    }
-                }
+                dataBaseWork.GetShemaTableRespondents();
+                dgDataPasswords.ItemsSource = dataBaseWork.tableRespondents.DefaultView;
             }
+            else
+            {
+                MenuFile.IsEnabled = false;
+                MenuDB.IsEnabled = false;
+                MenuAdmUser.IsEnabled = false;
+                GroupBoxSearch.IsEnabled = false;
+                GroupBoxRedact.IsEnabled = false;
+                dgDataPasswords.IsEnabled = false;
+            }
+
+            //if (DbUserExist())
+            //{
+            //    try
+            //    {
+            //        logger.Info("[Получение SchemaTableRespondents]");
+
+            //        connection = new SqlConnection(connectionString);
+            //        sqlCommand = connection.CreateCommand();
+            //        sqlCommand.CommandText = "SELECT* FROM [Password]";
+
+            //        sqlDataAdapter = new SqlDataAdapter();
+            //        sqlDataAdapter.UpdateBatchSize = 3; // ???
+            //        sqlDataAdapter.SelectCommand = sqlCommand;
+
+            //        sqlDataAdapter.InsertCommand = new SqlCommand("sp_InsertPassword");
+            //        sqlDataAdapter.InsertCommand.CommandType = CommandType.StoredProcedure;
+            //        sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
+            //        sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
+            //        sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
+            //        sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@datecreate", SqlDbType.NVarChar, 15, "datecreate"));
+            //        sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
+            //        SqlParameter parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
+            //        parameter.Direction = ParameterDirection.Output;
+
+
+            //        tableRespondents = new DataTable();
+            //        sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);
+
+            //        dgDataPasswords.ItemsSource = tableRespondents.DefaultView;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+            //        logger.Error(ex.Message + ex.StackTrace);
+            //    }
+            //    finally
+            //    {
+            //        if (connection.State == ConnectionState.Open)
+            //        {
+            //            connection.Close();
+            //        }
+            //    }
+            //}
         }
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
@@ -347,10 +367,10 @@ namespace Websbor_PasswordRespondents
                             dataRow.Delete();
                         }
                     }
-                }                
-                    
-                SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);                    
-                sqlDataAdapter.Update(tableRespondents);                
+                }
+
+                SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
+                sqlDataAdapter.Update(tableRespondents);
             }
             catch (Exception ex)
             {
@@ -374,7 +394,8 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonGetAllData_Click(object sender, RoutedEventArgs e)
         {
-            GetDataDB(sqlQueryGetAllData);         
+            //GetDataDB(sqlQueryGetAllData);
+            dataBaseWork.GetDataDBtoTableRespondents(sqlQueryGetAllData);
         }
 
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
@@ -382,17 +403,18 @@ namespace Websbor_PasswordRespondents
 
             if (RadioButtonOKPO.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
             {
-                GetDataDB($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+               dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
             }
             else if (RadioButtonName.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
             {
-                GetDataDB($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
+                dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
             }
         }
 
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            UpdateDB();
+            dataBaseWork.UpdateDB();
+            //UpdateDB();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
@@ -418,17 +440,18 @@ namespace Websbor_PasswordRespondents
 
             try
             {
-                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-                {
-                    SqlCommand sqlCommand = connection.CreateCommand();
-                    sqlCommand.CommandText = "SELECT name, okpo, password, datecreate, comment FROM Password";
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-                    dataTable = new DataTable();
-                    sqlDataAdapter.Fill(dataTable);
-                }
+                //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                //{
+                //    SqlCommand sqlCommand = connection.CreateCommand();
+                //    sqlCommand.CommandText = "SELECT name, okpo, password, datecreate, comment FROM Password";
+                //    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                //    dataTable = new DataTable();
+                //    sqlDataAdapter.Fill(dataTable);
+                //}
 
                 fileRespondents = new FileRespondents();
-                var file = fileRespondents.DataTableToEcxel(dataTable);
+                dataTable = dataBaseWork.GetDataDB(sqlQueryGetAllData);
+                var file = fileRespondents.DataTableToExcel(dataTable);
 
 
                 saveFileDialog = new SaveFileDialog();
@@ -502,12 +525,12 @@ namespace Websbor_PasswordRespondents
             if (e.Key == Key.Enter)
             {
                 if (RadioButtonOKPO.IsChecked == true)
-                {                    
-                    GetDataDB($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+                {
+                   dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
                 }
                 else if (RadioButtonName.IsChecked == true)
                 {
-                    GetDataDB($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
+                    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
                 }
             }
         }
@@ -552,30 +575,31 @@ namespace Websbor_PasswordRespondents
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
-            int count;
+            dataBaseWork.DeleteAllRowsTable();
+            //int count;
 
-            try
-            {
-                if (System.Windows.MessageBox.Show("Удалить все записи в таблице?", "Сообщение", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
-                {
-                    tableRespondents.Clear();
+            //try
+            //{
+            //    if (System.Windows.MessageBox.Show("Удалить все записи в таблице?", "Сообщение", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+            //    {
+            //        tableRespondents.Clear();
 
-                    using (SqlConnection connectionDeleteAll = new SqlConnection(connectionString))
-                    {
-                        SqlCommand sqlCommand = new SqlCommand(sqlQueryDeleteTable, connectionDeleteAll);
-                        connectionDeleteAll.Open();
-                        count = sqlCommand.ExecuteNonQuery();
-                        connectionDeleteAll.Close();
-                    }
+            //        using (SqlConnection connectionDeleteAll = new SqlConnection(connectionString))
+            //        {
+            //            SqlCommand sqlCommand = new SqlCommand(sqlQueryDeleteTable, connectionDeleteAll);
+            //            connectionDeleteAll.Open();
+            //            count = sqlCommand.ExecuteNonQuery();
+            //            connectionDeleteAll.Close();
+            //        }
 
-                    System.Windows.MessageBox.Show($"Удалено записей: {count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);                                     
-                }                
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message);
-            }
+            //        System.Windows.MessageBox.Show($"Удалено записей: {count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+            //    logger.Error(ex.Message);
+            //}
         }
 
         private void MenuItemOpenSettings_Click(object sender, RoutedEventArgs e)
@@ -624,7 +648,7 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonClearDatagrid_Click(object sender, RoutedEventArgs e)
         {
-            if (tableRespondents.Rows.Count!=0)
+            if (tableRespondents.Rows.Count != 0)
             {
                 tableRespondents.Clear();
             }

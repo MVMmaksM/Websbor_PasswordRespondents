@@ -12,7 +12,7 @@ namespace Websbor_PasswordRespondents
     class FileRespondents
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        public byte[] DataTableToEcxel(DataTable dataTable)
+        public byte[] DataTableToExcel(DataTable dataTable)
         {
             logger.Info("[Вызов метода DataTableToEcxel]");
 

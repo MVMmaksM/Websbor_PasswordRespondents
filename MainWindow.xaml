@@ -12,7 +12,7 @@
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#eb9534"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
+                <DataGridTextColumn x:Name="okpo"  Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="13"/>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Path=password}" Width="120" FontFamily="Times New Roman" FontSize="13"/>
                 <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy\}}"  Width="105" FontFamily="Times New Roman" FontSize="14"/>
