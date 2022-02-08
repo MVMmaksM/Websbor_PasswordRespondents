@@ -1,0 +1,7 @@
+create trigger Password_UPDATE
+ON Password
+AFTER UPDATE
+AS
+UPDATE Password
+SET dateupdate= GETDATE()
+WHERE id=(select id FROM INSERTED);

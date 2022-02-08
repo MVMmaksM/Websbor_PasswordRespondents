@@ -73,6 +73,6 @@ namespace Websbor_PasswordRespondents
         private void Btn_CancelSettings_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
+        }      
     }
 }

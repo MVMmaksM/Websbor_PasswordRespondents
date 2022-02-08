@@ -40,15 +40,7 @@ namespace Websbor_PasswordRespondents
                     var resultCommandExistUser = commandExistUser.ExecuteScalar() as int?;
 
                     if (resultCommandExistUser != 1)
-                    {
-                        //MenuFile.IsEnabled = false;
-                        //MenuDB.IsEnabled = false;
-                        //MenuAdmUser.IsEnabled = false;
-                        //GroupBoxSearch.IsEnabled = false;
-                        //GroupBoxRedact.IsEnabled = false;
-                        //dgDataPasswords.IsEnabled = false;
-
-
+                    {                     
                         MessageBox.Show($"Пользователь {_userName} не найден в dbo.Users", "Ошибка доступа к БД", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                         logger.Warn($"[Пользователь {_userName} не найден в dbo.Users]");
 
@@ -59,14 +51,7 @@ namespace Websbor_PasswordRespondents
                 }
             }
             catch (Exception ex)
-            {
-                //MenuFile.IsEnabled = false;
-                //MenuDB.IsEnabled = false;
-                //MenuAdmUser.IsEnabled = false;
-                //GroupBoxSearch.IsEnabled = false;
-                //GroupBoxRedact.IsEnabled = false;
-                //dgDataPasswords.IsEnabled = false;
-
+            {        
                 MessageBox.Show($"При подключении к dbo.Users возникла ошибка: {ex.Message} \n\nсм. log-файл ", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message + ex.StackTrace);
 
@@ -106,7 +91,7 @@ namespace Websbor_PasswordRespondents
             try
             {
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-
+                comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;
                 //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();                
                 sqlDataAdapter.Update(tableRespondents);
             }
@@ -150,9 +135,7 @@ namespace Websbor_PasswordRespondents
 
 
                 tableRespondents = new DataTable();
-                sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);
-
-                //dgDataPasswords.ItemsSource = tableRespondents.DefaultView;
+                sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);               
             }
             catch (Exception ex)
             {

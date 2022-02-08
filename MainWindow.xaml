@@ -5,28 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Websbor_PasswordRespondents"
         mc:Ignorable="d"
-        Title="Учетки респондентов" Height="430" Width="617" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="NoResize">
+        Title="Учетки респондентов" Height="430" Width="737" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="NoResize">
     <Grid>
         <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Loaded="dgDataPasswords_Loaded" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#eb9534"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="okpo"  Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
+                <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="13"/>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Path=password}" Width="120" FontFamily="Times New Roman" FontSize="13"/>
-                <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy\}}"  Width="105" FontFamily="Times New Roman" FontSize="14"/>
+                <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy\}}"  Width="105" FontFamily="Times New Roman" FontSize="13"/>
+                <DataGridTextColumn Header="Дата изменения" Binding="{Binding Path=dateupdate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" IsReadOnly="True" Width="*" FontFamily="Times New Roman" FontSize="13"/>
+                <DataGridTextColumn Header="Пользователь изменивший запись" Binding="{Binding Path=userupdate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="Примечание" Binding="{Binding Path=comment}" IsReadOnly="False" Width="*" FontFamily="Times New Roman"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GroupBox x:Name="GroupBoxSearch" Header="Поиск" Margin="0,0,10,30" HorizontalAlignment="Right" Width="303" Height="71" VerticalAlignment="Bottom">
+        <GroupBox x:Name="GroupBoxSearch" Header="Поиск" Margin="0,0,10,30" HorizontalAlignment="Right" Width="363" Height="71" VerticalAlignment="Bottom">
             <Grid>
-                <TextBox x:Name="TxtBoxSearch" VerticalContentAlignment="Center" Height="20" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" HorizontalAlignment="Left" Width="262" Margin="10,0,0,0" KeyDown="TxtBoxSearch_KeyDown">
+                <TextBox x:Name="TxtBoxSearch" VerticalContentAlignment="Center" Height="20" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" HorizontalAlignment="Left" Width="331" Margin="10,0,0,0" KeyDown="TxtBoxSearch_KeyDown">
                     <TextBox.Effect>
                         <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
                     </TextBox.Effect>
                 </TextBox>
-                <Button x:Name="ButtonSearch" Content="Найти" VerticalAlignment="Center"  Click="ButtonSearch_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="197,25,0,3" HorizontalAlignment="Left" Width="75">
+                <Button x:Name="ButtonSearch" Content="Найти" VerticalAlignment="Center"  Click="ButtonSearch_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="266,25,0,3" HorizontalAlignment="Left" Width="75">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -64,7 +66,7 @@
             <MenuItem Header="Настройки" Click="MenuItemOpenSettings_Click">
             </MenuItem>
         </Menu>
-        <GroupBox x:Name="GroupBoxRedact" Header="Редактирование" HorizontalAlignment="Left" Margin="10,0,0,30" Width="281" Height="71" VerticalAlignment="Bottom">
+        <GroupBox x:Name="GroupBoxRedact" Header="Редактирование" HorizontalAlignment="Left" Margin="10,0,0,30" Width="343" Height="71" VerticalAlignment="Bottom">
             <Grid>
                 <Button x:Name="ButtonUpdate" Content="Сохранить" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Constantia" Width="75" Click="ButtonUpdate_Click" Height="20" Background="#FFF0F0F0" Margin="10,0,0,0">
                     <Button.Resources>
@@ -108,12 +110,7 @@
                 </Button>
             </Grid>
         </GroupBox>
-        <StatusBar Height="20" VerticalAlignment="Bottom">
-            <TextBlock x:Name="ConnectionServerTxtBlock" TextWrapping="Wrap" Text="" Width="80" Margin="9,0,0,0" VerticalAlignment="Bottom" FontSize="10"/>
-            <TextBlock x:Name="ConnectionDatabaseTxtBlock" TextWrapping="Wrap" Text="" Width="200" Margin="21,0,0,0" VerticalAlignment="Bottom" FontSize="10"/>
-            <TextBlock x:Name="ConnectionStateTxtBlock" TextWrapping="Wrap" Width="120" Text="" Margin="21,0,0,0" VerticalAlignment="Bottom" FontSize="10"/>
-            <TextBlock x:Name="ConnectionWorkStationTxtBlock" TextWrapping="Wrap" Text="" Width="110" Margin="21,0,0,0" VerticalAlignment="Bottom" FontSize="10"/>
+        <StatusBar Height="20" VerticalAlignment="Bottom">           
         </StatusBar>
     </Grid>
-
 </Window>

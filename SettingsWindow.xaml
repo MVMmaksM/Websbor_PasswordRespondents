@@ -43,7 +43,7 @@
                         <TextBlock>False</TextBlock>
                     </ComboBox>
                 </Grid>
-            </TabItem>
+            </TabItem>           
         </TabControl>
         <Button x:Name="Btn_SaveSettings" Content="Сохранить" Margin="0,0,330,34" Click="Btn_SaveSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
             <Button.Resources>
@@ -59,7 +59,7 @@
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="2"/>
-                </Style>                
+                </Style>
             </Button.Resources>
             <Button.Effect>
                 <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
