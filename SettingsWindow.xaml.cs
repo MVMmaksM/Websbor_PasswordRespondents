@@ -19,6 +19,9 @@ namespace Websbor_PasswordRespondents
 {
     public partial class SettingsWindow : Window
     {
+        public delegate void VisibilityDGHandler(int columnNumber, bool visibility);
+        public VisibilityDGHandler visibilityDGHandler;
+            
         ConnectionStringSettings connectionStringSettings;
         SqlConnectionStringBuilder sqlConnectionStringBuilder;
         NameValueCollection allAppSettings;
@@ -73,6 +76,26 @@ namespace Websbor_PasswordRespondents
         private void Btn_CancelSettings_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }      
+        }       
+
+        //private void CheckBox_Checked_1(object sender, RoutedEventArgs e)
+        //{
+        //    visibilityDGHandler?.Invoke(1, true);
+        //}
+
+        //private void Check_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    visibilityDGHandler?.Invoke(1, false);
+        //}
+
+        //private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    visibilityDGHandler?.Invoke(0, true);
+        //}
+
+        //private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    visibilityDGHandler?.Invoke(0, false);
+        //}
     }
 }

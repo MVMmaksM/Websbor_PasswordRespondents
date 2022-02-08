@@ -46,6 +46,17 @@ namespace Websbor_PasswordRespondents
             this.Title += $" (Version {version.Major}.{version.Minor} [build {version.Build}])";
         }
 
+        //private void Method(int columnNumber, bool visibility) 
+        //{
+        //    if (visibility==true)
+        //    {
+        //        dgDataPasswords.Columns[columnNumber].Visibility = Visibility.Visible;
+        //    }
+        //    else if (visibility==false)
+        //    {
+        //        dgDataPasswords.Columns[columnNumber].Visibility = Visibility.Hidden;
+        //    }            
+        //}
         private void LoadFile()
         {
             logger.Info("[Вызов метода LoadFile]");
@@ -397,6 +408,7 @@ namespace Websbor_PasswordRespondents
         private void MenuItemOpenSettings_Click(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.visibilityDGHandler = Method;
             settingsWindow.Owner = this;
             settingsWindow.Show();
         }

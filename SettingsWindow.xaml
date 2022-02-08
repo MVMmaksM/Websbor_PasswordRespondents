@@ -42,6 +42,8 @@
                         <TextBlock>True</TextBlock>
                         <TextBlock>False</TextBlock>
                     </ComboBox>
+                    <CheckBox x:Name="Check" Content="CheckBox" HorizontalAlignment="Left" Margin="208,156,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked_1" Unchecked="Check_Unchecked"/>
+                    <CheckBox  Content="CheckBox" HorizontalAlignment="Left" Margin="208,176,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                 </Grid>
             </TabItem>           
         </TabControl>
