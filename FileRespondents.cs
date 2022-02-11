@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using NLog;
 using OfficeOpenXml;
 
 namespace Websbor_PasswordRespondents
-{    
+{
     class FileRespondents
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -71,7 +73,7 @@ namespace Websbor_PasswordRespondents
                 return dataTableRespondents;
             }
 
-            List<string> columnNames = new List<string>();
+            //List<string> columnNames = new List<string>();
 
             //int currentColumn = 1;
 
@@ -144,11 +146,90 @@ namespace Websbor_PasswordRespondents
             sheet.Cells[1, 1, 1, 5].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
             sheet.Cells[1, 1, 1, 5].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
             sheet.Cells[1, 1, 1, 5].Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-            sheet.Columns[1,5].Style.Numberformat.Format = "@";
-            
-
+            sheet.Columns[1, 5].Style.Numberformat.Format = "@";
 
             return package.GetAsByteArray();
+        }
+        public DataTable LoadFile()
+        {
+            logger.Info("[Вызов метода LoadFile]");
+            
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                string fileExtension;
+                string filePath;
+                Func<string, DataTable> readFile = null;
+                System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog();
+                fileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
+                fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    filePath = fileDialog.FileName;
+                    fileExtension = Path.GetExtension(filePath);
+
+                    if (fileExtension == ".txt")
+                    {
+                        readFile = ReadTextFile;
+                    }
+                    else if (fileExtension == ".xlsx")
+                    {
+                        readFile = ExcelToDataTable;
+                    }
+
+                    dataTable = readFile?.Invoke(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
+            }
+
+            return dataTable;
+        }
+        public DataTable ReadTextFile(string pathFile)
+        {
+            logger.Info("[Вызов метода ReadTextFile]");
+
+            DataTable datafileopen = new DataTable();
+            try
+            {
+                datafileopen.Columns.AddRange(new DataColumn[5]
+                {      new DataColumn("name", typeof(string)),
+                   new DataColumn("okpo", typeof(string)),
+                   new DataColumn("password",typeof(string)),
+                   new DataColumn("datecreate",typeof(string)),
+                   new DataColumn("comment",typeof(string))
+                });
+
+                string[] vs = File.ReadAllLines(pathFile);
+
+                foreach (string row in vs)
+                {
+
+                    if (!string.IsNullOrEmpty(row))
+                    {
+                        datafileopen.Rows.Add();
+                        int i = 0;
+                        foreach (string cell in row.Split('#'))
+                        {
+                            datafileopen.Rows[datafileopen.Rows.Count - 1][i] = cell;
+                            i++;
+                        }
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message + ex.Message);
+            }
+
+            return datafileopen;
         }
     }
 }

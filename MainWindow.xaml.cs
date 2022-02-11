@@ -31,8 +31,9 @@ namespace Websbor_PasswordRespondents
         string sqlQuerySaveallData = "SELECT name, okpo, password, datecreate, comment  FROM [Password]";
         private static Logger logger = LogManager.GetCurrentClassLogger();        
         NameValueCollection allAppSettings;       
-        Version version;
+        public Version version;
         private DBWork dataBaseWork;
+        private FileRespondents loadFileRespondents;
 
         public MainWindow()
         {
@@ -44,143 +45,9 @@ namespace Websbor_PasswordRespondents
             dgDataPasswords.CanUserReorderColumns = Convert.ToBoolean(allAppSettings["CanUserReorderColumns"]);  
             version = Assembly.GetExecutingAssembly().GetName().Version;
             this.Title += $" (Version {version.Major}.{version.Minor} [build {version.Build}])";
+            
         }
-
-        //private void Method(int columnNumber, bool visibility) 
-        //{
-        //    if (visibility==true)
-        //    {
-        //        dgDataPasswords.Columns[columnNumber].Visibility = Visibility.Visible;
-        //    }
-        //    else if (visibility==false)
-        //    {
-        //        dgDataPasswords.Columns[columnNumber].Visibility = Visibility.Hidden;
-        //    }            
-        //}
-        private void LoadFile()
-        {
-            logger.Info("[Вызов метода LoadFile]");
-
-            try
-            {
-                string fileExtension;
-                string filePath;
-                Action<string> readFile = null;
-                System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog();
-                fileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
-                fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);               
-
-                if (fileDialog.ShowDialog()==System.Windows.Forms.DialogResult.OK)
-                {
-                    filePath = fileDialog.FileName;
-                    fileExtension = System.IO.Path.GetExtension(filePath);
-
-                    if (fileExtension == ".txt")
-                    {
-                        readFile = ReadTextFile;
-                    }
-                    else if (fileExtension == ".xlsx")
-                    {
-                        readFile = ReadExcelFile;
-                    }
-
-                    readFile?.Invoke(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message);
-            }
-        }
-
-        void ReadExcelFile(string pathFile)
-        {
-            logger.Info("[Вызов метода ReadExcelFile]");
-            try
-            {
-                SqlConnection connection = new SqlConnection(connectionString);
-                FileRespondents excelFileRepondents = new FileRespondents();
-                DataTable dataTable = new DataTable();
-                dataTable = excelFileRepondents.ExcelToDataTable(pathFile);
-
-                SqlDataAdapter adapter = new SqlDataAdapter();
-                adapter.InsertCommand = new SqlCommand("Insert password (name, okpo, password, datecreate, comment) Values(@name, @okpo, @password, @datecreate, @comment)", connection);
-                adapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 100).SourceColumn = "name";
-                adapter.InsertCommand.Parameters.Add("@okpo", SqlDbType.NVarChar, 15).SourceColumn = "okpo";
-                adapter.InsertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 15).SourceColumn = "password";
-                adapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 15).SourceColumn = "datecreate";
-                adapter.InsertCommand.Parameters.Add("@comment", SqlDbType.NVarChar, 100).SourceColumn = "comment";
-                adapter.Update(dataTable);
-
-                MessageBox.Show($"Загружено записей: {dataTable.Rows.Count}", "Уведомление", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + "\nсм.log-файл", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                logger.Error(ex.Message + ex.Message);
-            }
-        }
-        void ReadTextFile(string pathFile)
-        {
-            logger.Info("[Вызов метода ReadTextFile]");
-
-            try
-            {
-                SqlConnection connection = new SqlConnection(connectionString);
-                DataTable datafileopen = new DataTable();
-
-                datafileopen.Columns.AddRange(new DataColumn[5]
-                {      new DataColumn("name", typeof(string)),
-                   new DataColumn("okpo", typeof(string)),
-                   new DataColumn("password",typeof(string)),
-                   new DataColumn("datecreate",typeof(string)),
-                   new DataColumn("comment",typeof(string))
-                });
-
-                string[] vs = File.ReadAllLines(pathFile);
-
-                foreach (string row in vs)
-                {
-
-                    if (!string.IsNullOrEmpty(row))
-                    {
-                        datafileopen.Rows.Add();
-                        int i = 0;
-                        foreach (string cell in row.Split('#'))
-                        {
-                            datafileopen.Rows[datafileopen.Rows.Count - 1][i] = cell;
-                            i++;
-                        }
-                    }
-                }
-
-                SqlDataAdapter adapter = new SqlDataAdapter();
-                adapter.InsertCommand = new SqlCommand("Insert password (name, okpo, password, datecreate, comment) Values(@name, @okpo, @password, @datecreate, @comment)", connection);
-                adapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 100).SourceColumn = "name";
-                adapter.InsertCommand.Parameters.Add("@okpo", SqlDbType.NVarChar, 15).SourceColumn = "okpo";
-                adapter.InsertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 15).SourceColumn = "password";
-                adapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 15).SourceColumn = "datecreate";
-                adapter.InsertCommand.Parameters.Add("@comment", SqlDbType.NVarChar, 100).SourceColumn = "comment";
-                adapter.Update(datafileopen);
-
-                System.Windows.MessageBox.Show($"Загружено записей: {datafileopen.Rows.Count}", "Уведомление", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message + ex.Message);
-            }
-            finally
-            {
-                //if (connection != null)
-                //{
-                //    connection.Close();
-                //    logger.Info($"[Подключение к БД]:{connection.State}");
-                //}
-            }
-        }
-        private void dgDataPasswords_Loaded(object sender, RoutedEventArgs e)
+        private void Websbor_PasswordRespondents_Window_Loded(object sender, RoutedEventArgs e)
         {
             dataBaseWork = new DBWork(connectionString);
 
@@ -199,7 +66,132 @@ namespace Websbor_PasswordRespondents
                 dgDataPasswords.IsEnabled = false;
             }
         }
+        private void LoadFile()
+        {
+            loadFileRespondents = new FileRespondents();           
+            dataBaseWork.LoadFileToDB(loadFileRespondents.LoadFile());
 
+            //logger.Info("[Вызов метода LoadFile]");
+
+            //try
+            //{
+            //    string fileExtension;
+            //    string filePath;
+            //    Action<string> readFile = null;
+            //    System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog();
+            //    fileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
+            //    fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);               
+
+            //    if (fileDialog.ShowDialog()==System.Windows.Forms.DialogResult.OK)
+            //    {
+            //        filePath = fileDialog.FileName;
+            //        fileExtension = System.IO.Path.GetExtension(filePath);
+
+            //        if (fileExtension == ".txt")
+            //        {
+            //            readFile = ReadTextFile;
+            //        }
+            //        else if (fileExtension == ".xlsx")
+            //        {
+            //            readFile = ReadExcelFile;
+            //        }
+
+            //        readFile?.Invoke(filePath);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+            //    logger.Error(ex.Message);
+            //}
+        }
+        //void ReadExcelFile(string pathFile)
+        //{
+        //    logger.Info("[Вызов метода ReadExcelFile]");
+        //    try
+        //    {
+        //        SqlConnection connection = new SqlConnection(connectionString);
+        //        FileRespondents excelFileRepondents = new FileRespondents();
+        //        DataTable dataTable = new DataTable();
+        //        dataTable = excelFileRepondents.ExcelToDataTable(pathFile);
+
+        //        SqlDataAdapter adapter = new SqlDataAdapter();
+        //        adapter.InsertCommand = new SqlCommand("Insert password (name, okpo, password, datecreate, comment) Values(@name, @okpo, @password, @datecreate, @comment)", connection);
+        //        adapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 100).SourceColumn = "name";
+        //        adapter.InsertCommand.Parameters.Add("@okpo", SqlDbType.NVarChar, 15).SourceColumn = "okpo";
+        //        adapter.InsertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 15).SourceColumn = "password";
+        //        adapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 15).SourceColumn = "datecreate";
+        //        adapter.InsertCommand.Parameters.Add("@comment", SqlDbType.NVarChar, 100).SourceColumn = "comment";
+        //        adapter.Update(dataTable);
+
+        //        MessageBox.Show($"Загружено записей: {dataTable.Rows.Count}", "Уведомление", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message + "\nсм.log-файл", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        logger.Error(ex.Message + ex.Message);
+        //    }
+        //}
+        //void ReadTextFile(string pathFile)
+        //{
+        //    logger.Info("[Вызов метода ReadTextFile]");
+
+        //    try
+        //    {
+        //        SqlConnection connection = new SqlConnection(connectionString);
+        //        DataTable datafileopen = new DataTable();
+
+        //        datafileopen.Columns.AddRange(new DataColumn[5]
+        //        {      new DataColumn("name", typeof(string)),
+        //           new DataColumn("okpo", typeof(string)),
+        //           new DataColumn("password",typeof(string)),
+        //           new DataColumn("datecreate",typeof(string)),
+        //           new DataColumn("comment",typeof(string))
+        //        });
+
+        //        string[] vs = File.ReadAllLines(pathFile);
+
+        //        foreach (string row in vs)
+        //        {
+
+        //            if (!string.IsNullOrEmpty(row))
+        //            {
+        //                datafileopen.Rows.Add();
+        //                int i = 0;
+        //                foreach (string cell in row.Split('#'))
+        //                {
+        //                    datafileopen.Rows[datafileopen.Rows.Count - 1][i] = cell;
+        //                    i++;
+        //                }
+        //            }
+        //        }
+
+        //        SqlDataAdapter adapter = new SqlDataAdapter();
+        //        adapter.InsertCommand = new SqlCommand("Insert password (name, okpo, password, datecreate, comment) Values(@name, @okpo, @password, @datecreate, @comment)", connection);
+        //        adapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 100).SourceColumn = "name";
+        //        adapter.InsertCommand.Parameters.Add("@okpo", SqlDbType.NVarChar, 15).SourceColumn = "okpo";
+        //        adapter.InsertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 15).SourceColumn = "password";
+        //        adapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 15).SourceColumn = "datecreate";
+        //        adapter.InsertCommand.Parameters.Add("@comment", SqlDbType.NVarChar, 100).SourceColumn = "comment";
+        //        adapter.Update(datafileopen);
+
+        //        System.Windows.MessageBox.Show($"Загружено записей: {datafileopen.Rows.Count}", "Уведомление", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+        //        logger.Error(ex.Message + ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        //if (connection != null)
+        //        //{
+        //        //    connection.Close();
+        //        //    logger.Info($"[Подключение к БД]:{connection.State}");
+        //        //}
+        //    }
+        //}
+       
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -407,8 +399,7 @@ namespace Websbor_PasswordRespondents
 
         private void MenuItemOpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow();
-            settingsWindow.visibilityDGHandler = Method;
+            SettingsWindow settingsWindow = new SettingsWindow();           
             settingsWindow.Owner = this;
             settingsWindow.Show();
         }
@@ -455,11 +446,9 @@ namespace Websbor_PasswordRespondents
             
             if (dataBaseWork.tableRespondents.Rows.Count != 0)
             {
-                dataBaseWork.tableRespondents.Clear();
+                dataBaseWork.tableRespondents.Clear();                
             }
-        }
-
-        
+        }       
     }
 }
 

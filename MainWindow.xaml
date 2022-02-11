@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Websbor_PasswordRespondents"
         mc:Ignorable="d"
-        Title="Учетки респондентов" Height="430" Width="737" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="NoResize">
+        Title="Учетки респондентов" Height="430" Width="737" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="CanResize" Loaded="Websbor_PasswordRespondents_Window_Loded">
     <Grid>
-        <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Loaded="dgDataPasswords_Loaded" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
+        <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#eb9534"/>
             </DataGrid.Resources>
@@ -15,7 +15,8 @@
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="13"/>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Path=password}" Width="120" FontFamily="Times New Roman" FontSize="13"/>
-                <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy\}}"  Width="105" FontFamily="Times New Roman" FontSize="13"/>
+                <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}"  Width="105" FontFamily="Times New Roman" FontSize="13" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Пользователь создавший запись" Binding="{Binding Path=usercreate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="Дата изменения" Binding="{Binding Path=dateupdate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" IsReadOnly="True" Width="*" FontFamily="Times New Roman" FontSize="13"/>
                 <DataGridTextColumn Header="Пользователь изменивший запись" Binding="{Binding Path=userupdate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman"/>
                 <DataGridTextColumn Header="Примечание" Binding="{Binding Path=comment}" IsReadOnly="False" Width="*" FontFamily="Times New Roman"/>

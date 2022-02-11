@@ -42,7 +42,7 @@ namespace Websbor_PasswordRespondents
             allAppSettings = ConfigurationManager.AppSettings;
             CmBxCanResizeRowHeader.Text = allAppSettings["CanUserResizeRows"];
             CmBxCanResizeColumnWidth.Text = allAppSettings["CanUserResizeColumns"];
-            CmBxCanUserReorderColumns.Text = allAppSettings["CanUserReorderColumns"];
+            CmBxCanUserReorderColumns.Text = allAppSettings["CanUserReorderColumns"];            
         }
 
         private void Btn_SaveSettings_Click(object sender, RoutedEventArgs e)

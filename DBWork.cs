@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,8 @@ namespace Websbor_PasswordRespondents
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private string _userName;
         private string sqlQueryDeleteTable = "DELETE FROM [Password]";
-        
+        private SqlParameter parameter;
+
         public DBWork(string connectionString)
         {
             _connectionString = connectionString;
@@ -91,7 +93,7 @@ namespace Websbor_PasswordRespondents
             try
             {
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;
+                comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;               
                 //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();                
                 sqlDataAdapter.Update(tableRespondents);
             }
@@ -113,8 +115,8 @@ namespace Websbor_PasswordRespondents
         {
             try
             {
-                logger.Info("[Получение SchemaTableRespondents]");
-
+                logger.Info("[Получение SchemaTableRespondents]");                
+                
                 connection = new SqlConnection(_connectionString);
                 sqlCommand = connection.CreateCommand();
                 sqlCommand.CommandText = "SELECT* FROM [Password]";
@@ -124,15 +126,32 @@ namespace Websbor_PasswordRespondents
                 sqlDataAdapter.SelectCommand = sqlCommand;
 
                 sqlDataAdapter.InsertCommand = new SqlCommand("sp_InsertPassword");
+                sqlDataAdapter.InsertCommand.Connection = connection;
                 sqlDataAdapter.InsertCommand.CommandType = CommandType.StoredProcedure;
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
-                sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@datecreate", SqlDbType.NVarChar, 15, "datecreate"));
+                sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@dateupdate", SqlDbType.DateTime, 0, "dateupdate"));
+                sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@userupdate", SqlDbType.NVarChar, 50, "userupdate"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
-                SqlParameter parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
+                parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
                 parameter.Direction = ParameterDirection.Output;
-
+                parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.DateTime, 0, "datecreate");
+                parameter.Direction = ParameterDirection.Output;
+                parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@usercreate", SqlDbType.NVarChar, 50, "usercreate");
+                parameter.Direction = ParameterDirection.Output;
+                sqlDataAdapter.UpdateCommand = new SqlCommand("sp_UpdatePassword");                
+                sqlDataAdapter.UpdateCommand.CommandType = CommandType.StoredProcedure;
+                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@ID", SqlDbType.Int, 0, "ID"));
+                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
+                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
+                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
+                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));             
+                parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@dateupdate", SqlDbType.DateTime, 0, "dateupdate");
+                parameter.Direction = ParameterDirection.Output;
+                parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@userupdate", SqlDbType.NVarChar, 50, "userupdate");
+                parameter.Direction = ParameterDirection.Output;
+               
 
                 tableRespondents = new DataTable();
                 sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);               
@@ -196,6 +215,51 @@ namespace Websbor_PasswordRespondents
                 sqlDataAdapter.Fill(dataTable);
             }          
             return dataTable;
+        }
+
+        public void LoadFileToDB (DataTable dataTable) 
+        {
+            try
+            {
+                int countExecuteRows = 0;
+                string sqlInsert = "INSERT INTO [Password] (name, okpo, password, datecreate, comment) VALUES (@name, @okpo, @password, @datecreate, @comment)";
+                SqlCommand sqlCommand;
+
+                using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+                {
+                    sqlConnection.Open();
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        sqlCommand = sqlConnection.CreateCommand();
+                        sqlCommand.CommandText = sqlInsert;
+                        sqlCommand.Parameters.AddWithValue("@name", row["name"]);
+                        sqlCommand.Parameters.AddWithValue("@okpo", row["okpo"]);
+                        sqlCommand.Parameters.AddWithValue("@password", row["password"]);
+                        sqlCommand.Parameters.AddWithValue("@datecreate", row["datecreate"]);
+                        sqlCommand.Parameters.AddWithValue("@comment", row["comment"]);
+                       
+                        try
+                        {
+                            countExecuteRows += sqlCommand.ExecuteNonQuery();
+                        }
+                        catch (SqlException exSql)
+                        {
+                            using (StreamWriter streamWriter = new StreamWriter(Environment.CurrentDirectory + "\\Test.txt", true))
+                            {                               
+                                streamWriter.WriteLine($"ОКПО {row["okpo"]} не загружен: " + exSql.Message);
+                            }
+                        }                        
+                    }
+                }
+
+                MessageBox.Show($"Добавлено записей: {countExecuteRows}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
+            }                 
         }
     }
 }
