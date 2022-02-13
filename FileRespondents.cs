@@ -106,14 +106,23 @@ namespace Websbor_PasswordRespondents
             {
                 var row = sheet.Cells[i, 1, i, sheet.Dimension.End.Column];
                 DataRow newRow = dataTableRespondents.NewRow();
-                //закруглить все ячейки в ряду
+               
                 foreach (var cell in row)
                 {
                     newRow[cell.Start.Column - 1] = cell.Text;
                 }
 
-                dataTableRespondents.Rows.Add(newRow);
+                if (!string.IsNullOrWhiteSpace(newRow["name"].ToString()) && !string.IsNullOrWhiteSpace(newRow["okpo"].ToString()) && !string.IsNullOrWhiteSpace(newRow["password"].ToString()))
+                {
+                    if (string.IsNullOrWhiteSpace(newRow["datecreate"].ToString()))
+                    {
+                        newRow["datecreate"] = null;
+                    }
+
+                    dataTableRespondents.Rows.Add(newRow);
+                }                
             }
+
             return dataTableRespondents;
         }
 

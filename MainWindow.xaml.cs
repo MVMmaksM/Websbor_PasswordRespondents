@@ -34,6 +34,7 @@ namespace Websbor_PasswordRespondents
         public Version version;
         private DBWork dataBaseWork;
         private FileRespondents loadFileRespondents;
+        DataTable DataTable;
 
         public MainWindow()
         {
@@ -68,8 +69,8 @@ namespace Websbor_PasswordRespondents
         }
         private void LoadFile()
         {
-            loadFileRespondents = new FileRespondents();           
-            dataBaseWork.LoadFileToDB(loadFileRespondents.LoadFile());
+            //loadFileRespondents = new FileRespondents();           
+            //dataBaseWork.LoadFileToDB(loadFileRespondents.LoadFile());
 
             //logger.Info("[Вызов метода LoadFile]");
 
@@ -253,7 +254,13 @@ namespace Websbor_PasswordRespondents
 
         private void MenuItemLoad_Click(object sender, RoutedEventArgs e)
         {
-            LoadFile();
+            loadFileRespondents = new FileRespondents();
+            DataTable = loadFileRespondents.LoadFile();
+
+            if (DataTable.Rows.Count>0)
+            {
+                dataBaseWork.LoadFileToDB(DataTable);
+            }            
         }
 
         private void MenuItemLoadWebSbor_Click(object sender, RoutedEventArgs e)

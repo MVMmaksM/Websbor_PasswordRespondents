@@ -15,7 +15,7 @@ namespace Websbor_PasswordRespondents
     {
         public DataTable tableRespondents;
         private string _connectionString;
-        private SqlConnection connection = null;        
+        private SqlConnection connection = null;
         private SqlDataAdapter sqlDataAdapter;
         private SqlCommand sqlCommand;
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -42,7 +42,7 @@ namespace Websbor_PasswordRespondents
                     var resultCommandExistUser = commandExistUser.ExecuteScalar() as int?;
 
                     if (resultCommandExistUser != 1)
-                    {                     
+                    {
                         MessageBox.Show($"Пользователь {_userName} не найден в dbo.Users", "Ошибка доступа к БД", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                         logger.Warn($"[Пользователь {_userName} не найден в dbo.Users]");
 
@@ -53,7 +53,7 @@ namespace Websbor_PasswordRespondents
                 }
             }
             catch (Exception ex)
-            {        
+            {
                 MessageBox.Show($"При подключении к dbo.Users возникла ошибка: {ex.Message} \n\nсм. log-файл ", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message + ex.StackTrace);
 
@@ -93,7 +93,7 @@ namespace Websbor_PasswordRespondents
             try
             {
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
-                comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;               
+                comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;
                 //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();                
                 sqlDataAdapter.Update(tableRespondents);
             }
@@ -111,12 +111,12 @@ namespace Websbor_PasswordRespondents
             }
         }
 
-        public void GetShemaTableRespondents() 
+        public void GetShemaTableRespondents()
         {
             try
             {
-                logger.Info("[Получение SchemaTableRespondents]");                
-                
+                logger.Info("[Получение SchemaTableRespondents]");
+
                 connection = new SqlConnection(_connectionString);
                 sqlCommand = connection.CreateCommand();
                 sqlCommand.CommandText = "SELECT* FROM [Password]";
@@ -140,21 +140,21 @@ namespace Websbor_PasswordRespondents
                 parameter.Direction = ParameterDirection.Output;
                 parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@usercreate", SqlDbType.NVarChar, 50, "usercreate");
                 parameter.Direction = ParameterDirection.Output;
-                sqlDataAdapter.UpdateCommand = new SqlCommand("sp_UpdatePassword");                
+                sqlDataAdapter.UpdateCommand = new SqlCommand("sp_UpdatePassword");
                 sqlDataAdapter.UpdateCommand.CommandType = CommandType.StoredProcedure;
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@ID", SqlDbType.Int, 0, "ID"));
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
-                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));             
+                sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
                 parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@dateupdate", SqlDbType.DateTime, 0, "dateupdate");
                 parameter.Direction = ParameterDirection.Output;
                 parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@userupdate", SqlDbType.NVarChar, 50, "userupdate");
                 parameter.Direction = ParameterDirection.Output;
-               
+
 
                 tableRespondents = new DataTable();
-                sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);               
+                sqlDataAdapter.FillSchema(tableRespondents, SchemaType.Source);
             }
             catch (Exception ex)
             {
@@ -170,7 +170,7 @@ namespace Websbor_PasswordRespondents
             }
         }
 
-        public void DeleteAllRowsTable() 
+        public void DeleteAllRowsTable()
         {
             int count;
 
@@ -178,10 +178,10 @@ namespace Websbor_PasswordRespondents
             {
                 if (MessageBox.Show("Удалить все записи в таблице?", "Сообщение", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
                 {
-                    if (tableRespondents.Rows.Count>0)
+                    if (tableRespondents.Rows.Count > 0)
                     {
                         tableRespondents.Clear();
-                    }                   
+                    }
 
                     using (SqlConnection connectionDeleteAll = new SqlConnection(_connectionString))
                     {
@@ -202,64 +202,83 @@ namespace Websbor_PasswordRespondents
 
         }
 
-        public DataTable GetDataDB(string command) 
+        public DataTable GetDataDB(string command)
         {
-            DataTable dataTable;           
+            DataTable dataTable;
 
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
             {
                 SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText =command;
+                sqlCommand.CommandText = command;
                 SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
                 dataTable = new DataTable();
                 sqlDataAdapter.Fill(dataTable);
-            }          
+            }
             return dataTable;
         }
 
-        public void LoadFileToDB (DataTable dataTable) 
+        public void LoadFileToDB(DataTable dataTable)
         {
+
+            int countExecuteRows = 0;
+            string sqlInsert = "INSERT INTO [Password] (name, okpo, password, datecreate, comment) VALUES (@name, @okpo, @password, @datecreate, @comment)";
+            SqlCommand sqlCommand;
+            List<string> loadResult = new List<string>();
+
             try
             {
-                int countExecuteRows = 0;
-                string sqlInsert = "INSERT INTO [Password] (name, okpo, password, datecreate, comment) VALUES (@name, @okpo, @password, @datecreate, @comment)";
-                SqlCommand sqlCommand;
-
-                using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+                for (int i = 0; i < dataTable.Rows.Count; i++) // проверить с какой строки начинается проверка
                 {
-                    sqlConnection.Open();
-
-                    foreach (DataRow row in dataTable.Rows)
+                    if (!long.TryParse(dataTable.Rows[i]["okpo"].ToString().Trim(), out long result))
                     {
-                        sqlCommand = sqlConnection.CreateCommand();
-                        sqlCommand.CommandText = sqlInsert;
-                        sqlCommand.Parameters.AddWithValue("@name", row["name"]);
-                        sqlCommand.Parameters.AddWithValue("@okpo", row["okpo"]);
-                        sqlCommand.Parameters.AddWithValue("@password", row["password"]);
-                        sqlCommand.Parameters.AddWithValue("@datecreate", row["datecreate"]);
-                        sqlCommand.Parameters.AddWithValue("@comment", row["comment"]);
-                       
-                        try
-                        {
-                            countExecuteRows += sqlCommand.ExecuteNonQuery();
-                        }
-                        catch (SqlException exSql)
-                        {
-                            using (StreamWriter streamWriter = new StreamWriter(Environment.CurrentDirectory + "\\Test.txt", true))
-                            {                               
-                                streamWriter.WriteLine($"ОКПО {row["okpo"]} не загружен: " + exSql.Message);
-                            }
-                        }                        
+                        loadResult.Add($"Значение ОКПО: {dataTable.Rows[i]["okpo"]} не является числом");
+                        dataTable.Rows.RemoveAt(i);
                     }
                 }
 
-                MessageBox.Show($"Добавлено записей: {countExecuteRows}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (dataTable.Rows.Count > 0)
+                {
+                    using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+                    {
+                        sqlConnection.Open();
+
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            sqlCommand = sqlConnection.CreateCommand();
+                            sqlCommand.CommandText = sqlInsert;
+                            sqlCommand.Parameters.AddWithValue("@name", row["name"]);
+                            sqlCommand.Parameters.AddWithValue("@okpo", row["okpo"]);
+                            sqlCommand.Parameters.AddWithValue("@password", row["password"]);
+                            sqlCommand.Parameters.AddWithValue("@datecreate", row["datecreate"]);
+                            sqlCommand.Parameters.AddWithValue("@comment", row["comment"]);
+
+                            try
+                            {
+                                countExecuteRows += sqlCommand.ExecuteNonQuery();
+                            }
+                            catch (SqlException exSql)
+                            {
+                                loadResult.Add($"ОКПО {row["okpo"]} не загружен: " + exSql.Message);
+                            }
+                        }
+                    }
+
+                    using (StreamWriter writeLoadProtocol = new StreamWriter(Environment.CurrentDirectory + @"\LoadProtocol.txt"))
+                    {
+                        foreach (var result in loadResult)
+                        {
+                            writeLoadProtocol.WriteLine(result);
+                        }
+                    }
+                }
+
+                MessageBox.Show($"Загружено записей: {countExecuteRows} \nНе загружено записей: {loadResult.Count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message);
-            }                 
+            }
         }
     }
 }
