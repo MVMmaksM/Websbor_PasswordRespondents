@@ -21,21 +21,21 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Reflection;
 using NLog;
+using Path = System.IO.Path;
 
 namespace Websbor_PasswordRespondents
 {
     public partial class MainWindow : Window
     {
-        string connectionString;        
+        string connectionString;
         string sqlQueryGetAllData = "SELECT * FROM [Password]";
         string sqlQuerySaveallData = "SELECT name, okpo, password, datecreate, comment  FROM [Password]";
-        private static Logger logger = LogManager.GetCurrentClassLogger();        
-        NameValueCollection allAppSettings;       
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        NameValueCollection allAppSettings;
         public Version version;
         private DBWork dataBaseWork;
-        private FileRespondents loadFileRespondents;
-        DataTable DataTable;
-
+        private FileRespondents readFileRespondents;
+        private DataTable tableRespondentsFromFile;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,10 +43,10 @@ namespace Websbor_PasswordRespondents
             allAppSettings = ConfigurationManager.AppSettings;
             dgDataPasswords.CanUserResizeRows = Convert.ToBoolean(allAppSettings["CanUserResizeRows"]);
             dgDataPasswords.CanUserResizeColumns = Convert.ToBoolean(allAppSettings["CanUserResizeColumns"]);
-            dgDataPasswords.CanUserReorderColumns = Convert.ToBoolean(allAppSettings["CanUserReorderColumns"]);  
+            dgDataPasswords.CanUserReorderColumns = Convert.ToBoolean(allAppSettings["CanUserReorderColumns"]);
             version = Assembly.GetExecutingAssembly().GetName().Version;
             this.Title += $" (Version {version.Major}.{version.Minor} [build {version.Build}])";
-            
+
         }
         private void Websbor_PasswordRespondents_Window_Loded(object sender, RoutedEventArgs e)
         {
@@ -67,132 +67,7 @@ namespace Websbor_PasswordRespondents
                 dgDataPasswords.IsEnabled = false;
             }
         }
-        private void LoadFile()
-        {
-            //loadFileRespondents = new FileRespondents();           
-            //dataBaseWork.LoadFileToDB(loadFileRespondents.LoadFile());
 
-            //logger.Info("[Вызов метода LoadFile]");
-
-            //try
-            //{
-            //    string fileExtension;
-            //    string filePath;
-            //    Action<string> readFile = null;
-            //    System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog();
-            //    fileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
-            //    fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);               
-
-            //    if (fileDialog.ShowDialog()==System.Windows.Forms.DialogResult.OK)
-            //    {
-            //        filePath = fileDialog.FileName;
-            //        fileExtension = System.IO.Path.GetExtension(filePath);
-
-            //        if (fileExtension == ".txt")
-            //        {
-            //            readFile = ReadTextFile;
-            //        }
-            //        else if (fileExtension == ".xlsx")
-            //        {
-            //            readFile = ReadExcelFile;
-            //        }
-
-            //        readFile?.Invoke(filePath);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-            //    logger.Error(ex.Message);
-            //}
-        }
-        //void ReadExcelFile(string pathFile)
-        //{
-        //    logger.Info("[Вызов метода ReadExcelFile]");
-        //    try
-        //    {
-        //        SqlConnection connection = new SqlConnection(connectionString);
-        //        FileRespondents excelFileRepondents = new FileRespondents();
-        //        DataTable dataTable = new DataTable();
-        //        dataTable = excelFileRepondents.ExcelToDataTable(pathFile);
-
-        //        SqlDataAdapter adapter = new SqlDataAdapter();
-        //        adapter.InsertCommand = new SqlCommand("Insert password (name, okpo, password, datecreate, comment) Values(@name, @okpo, @password, @datecreate, @comment)", connection);
-        //        adapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 100).SourceColumn = "name";
-        //        adapter.InsertCommand.Parameters.Add("@okpo", SqlDbType.NVarChar, 15).SourceColumn = "okpo";
-        //        adapter.InsertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 15).SourceColumn = "password";
-        //        adapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 15).SourceColumn = "datecreate";
-        //        adapter.InsertCommand.Parameters.Add("@comment", SqlDbType.NVarChar, 100).SourceColumn = "comment";
-        //        adapter.Update(dataTable);
-
-        //        MessageBox.Show($"Загружено записей: {dataTable.Rows.Count}", "Уведомление", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message + "\nсм.log-файл", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        //        logger.Error(ex.Message + ex.Message);
-        //    }
-        //}
-        //void ReadTextFile(string pathFile)
-        //{
-        //    logger.Info("[Вызов метода ReadTextFile]");
-
-        //    try
-        //    {
-        //        SqlConnection connection = new SqlConnection(connectionString);
-        //        DataTable datafileopen = new DataTable();
-
-        //        datafileopen.Columns.AddRange(new DataColumn[5]
-        //        {      new DataColumn("name", typeof(string)),
-        //           new DataColumn("okpo", typeof(string)),
-        //           new DataColumn("password",typeof(string)),
-        //           new DataColumn("datecreate",typeof(string)),
-        //           new DataColumn("comment",typeof(string))
-        //        });
-
-        //        string[] vs = File.ReadAllLines(pathFile);
-
-        //        foreach (string row in vs)
-        //        {
-
-        //            if (!string.IsNullOrEmpty(row))
-        //            {
-        //                datafileopen.Rows.Add();
-        //                int i = 0;
-        //                foreach (string cell in row.Split('#'))
-        //                {
-        //                    datafileopen.Rows[datafileopen.Rows.Count - 1][i] = cell;
-        //                    i++;
-        //                }
-        //            }
-        //        }
-
-        //        SqlDataAdapter adapter = new SqlDataAdapter();
-        //        adapter.InsertCommand = new SqlCommand("Insert password (name, okpo, password, datecreate, comment) Values(@name, @okpo, @password, @datecreate, @comment)", connection);
-        //        adapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 100).SourceColumn = "name";
-        //        adapter.InsertCommand.Parameters.Add("@okpo", SqlDbType.NVarChar, 15).SourceColumn = "okpo";
-        //        adapter.InsertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 15).SourceColumn = "password";
-        //        adapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 15).SourceColumn = "datecreate";
-        //        adapter.InsertCommand.Parameters.Add("@comment", SqlDbType.NVarChar, 100).SourceColumn = "comment";
-        //        adapter.Update(datafileopen);
-
-        //        System.Windows.MessageBox.Show($"Загружено записей: {datafileopen.Rows.Count}", "Уведомление", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-        //        logger.Error(ex.Message + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        //if (connection != null)
-        //        //{
-        //        //    connection.Close();
-        //        //    logger.Info($"[Подключение к БД]:{connection.State}");
-        //        //}
-        //    }
-        //}
-       
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -216,7 +91,7 @@ namespace Websbor_PasswordRespondents
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message + ex.StackTrace);
-            }            
+            }
         }
 
         private void dgDataPasswords_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -225,7 +100,7 @@ namespace Websbor_PasswordRespondents
         }
 
         private void ButtonGetAllData_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             dataBaseWork.GetDataDBtoTableRespondents(sqlQueryGetAllData);
         }
 
@@ -234,7 +109,7 @@ namespace Websbor_PasswordRespondents
 
             if (RadioButtonOKPO.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
             {
-               dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+                dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
             }
             else if (RadioButtonName.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
             {
@@ -244,7 +119,7 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            dataBaseWork.UpdateDB();            
+            dataBaseWork.UpdateDB();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
@@ -254,13 +129,49 @@ namespace Websbor_PasswordRespondents
 
         private void MenuItemLoad_Click(object sender, RoutedEventArgs e)
         {
-            loadFileRespondents = new FileRespondents();
-            DataTable = loadFileRespondents.LoadFile();
+            readFileRespondents = new FileRespondents();
+            tableRespondentsFromFile = new DataTable();
+            string fileExtension;
+            string filePath;
+            Func<string, DataTable> readFile = null;
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-            if (DataTable.Rows.Count>0)
+            try
+            {               
+                if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    filePath = openFileDialog.FileName;
+
+                    fileExtension = Path.GetExtension(filePath);
+
+                    if (fileExtension == ".txt")
+                    {
+                        readFile = readFileRespondents.ReadTextToDataTable;
+                    }
+                    else if (fileExtension == ".xlsx")
+                    {
+                        readFile = readFileRespondents.ReadExcelToDataTable;
+                    }
+
+                    tableRespondentsFromFile = readFile?.Invoke(filePath);
+
+                    if (tableRespondentsFromFile.Rows.Count > 0)
+                    {
+                        dataBaseWork.LoadDataFileToDB(tableRespondentsFromFile);
+                    }
+                    else if (tableRespondentsFromFile.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Нет данных для загрузки \nСмотри протокол загрузки ", "Внимание", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                dataBaseWork.LoadFileToDB(DataTable);
-            }            
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
+            }
         }
 
         private void MenuItemLoadWebSbor_Click(object sender, RoutedEventArgs e)
@@ -272,7 +183,7 @@ namespace Websbor_PasswordRespondents
         {
             System.Windows.Forms.SaveFileDialog saveFileDialog;
             FileRespondents fileRespondents;
-            DataTable dataTable;
+            DataTable dataTable; 
 
             try
             {
@@ -284,7 +195,7 @@ namespace Websbor_PasswordRespondents
                 saveFileDialog = new System.Windows.Forms.SaveFileDialog();
                 saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 saveFileDialog.Filter = "|*.xlsx";
-                saveFileDialog.FileName = "Список респондентов";                
+                saveFileDialog.FileName = "Список респондентов";
 
                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
@@ -298,7 +209,7 @@ namespace Websbor_PasswordRespondents
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message);
             }
-        }
+        }     
 
         private void MenuItemOPenLog_Click(object sender, RoutedEventArgs e)
         {
@@ -352,7 +263,7 @@ namespace Websbor_PasswordRespondents
             {
                 if (RadioButtonOKPO.IsChecked == true)
                 {
-                   dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+                    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
                 }
                 else if (RadioButtonName.IsChecked == true)
                 {
@@ -401,12 +312,12 @@ namespace Websbor_PasswordRespondents
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
-            dataBaseWork.DeleteAllRowsTable();           
+            dataBaseWork.DeleteAllRowsTable();
         }
 
         private void MenuItemOpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow();           
+            SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.Owner = this;
             settingsWindow.Show();
         }
@@ -427,7 +338,7 @@ namespace Websbor_PasswordRespondents
                 saveFileDialog.FileName = "Шаблон загрузки";
                 bool? result = saveFileDialog.ShowDialog();
 
-                if (result==true)
+                if (result == true)
                 {
                     File.WriteAllBytes(saveFileDialog.FileName, shema);
 
@@ -450,12 +361,12 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonClearDatagrid_Click(object sender, RoutedEventArgs e)
         {
-            
+
             if (dataBaseWork.tableRespondents.Rows.Count != 0)
             {
-                dataBaseWork.tableRespondents.Clear();                
+                dataBaseWork.tableRespondents.Clear();
             }
-        }       
+        }
     }
 }
 

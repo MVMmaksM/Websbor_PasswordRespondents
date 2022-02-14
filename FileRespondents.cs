@@ -53,9 +53,10 @@ namespace Websbor_PasswordRespondents
             return package.GetAsByteArray();
         }
 
-        public DataTable ExcelToDataTable(string pathExcelFile)
+        public DataTable ReadExcelToDataTable(string pathExcelFile)
         {
             DataTable dataTableRespondents = new DataTable();
+            List<string> loadResult=new List<string>();
 
             dataTableRespondents.Columns.AddRange(new DataColumn[5]
             { new DataColumn("name", typeof(string)),
@@ -65,63 +66,82 @@ namespace Websbor_PasswordRespondents
             new DataColumn("comment", typeof(string))
             });
 
-            ExcelPackage package = new ExcelPackage(pathExcelFile);
-            ExcelWorksheet sheet = package.Workbook.Worksheets[0];
-
-            if (sheet.Dimension == null)
+            try
             {
-                return dataTableRespondents;
-            }
+                ExcelPackage package = new ExcelPackage(pathExcelFile);
+                ExcelWorksheet sheet = package.Workbook.Worksheets[0];
 
-            //List<string> columnNames = new List<string>();
-
-            //int currentColumn = 1;
-
-            //зацикливаем все столбцы на листе и добавляем их в таблицу данных
-            //foreach (var cell in sheet.Cells[1, 1, 1, sheet.Dimension.End.Column])
-            //{
-            //    string columnName = cell.Text.Trim();
-            //    //проверьте, был ли предыдущий заголовок пустым, и добавьте его, если он был
-            //    if (cell.Start.Column != currentColumn)
-            //    {
-            //        columnNames.Add("Header_" + currentColumn);
-            //        dataTableRespondents.Columns.Add("Header_" + currentColumn);
-            //        currentColumn++;
-            //    }
-            //    //добавьте имя столбца в список для подсчета дубликатов
-            //    columnNames.Add(columnName);
-            //    //подсчитайте повторяющиеся имена столбцов и сделайте их уникальными, чтобы избежать исключения
-            //    //Столбец с именем "Имя" уже принадлежит этому DataTable.
-            //    int occurrences = columnNames.Count(x => x.Equals(columnName));
-            //    if (occurrences > 1)
-            //    {
-            //        columnName = columnName + "_" + occurrences;
-            //    }
-            //    //добавить столбец в таблицу данных
-            //    dataTableRespondents.Columns.Add(columnName);
-            //    currentColumn++;
-            //}
-            // начать добавлять содержимое файла Excel в таблицу данных
-            for (int i = 2; i <= sheet.Dimension.End.Row; i++)
-            {
-                var row = sheet.Cells[i, 1, i, sheet.Dimension.End.Column];
-                DataRow newRow = dataTableRespondents.NewRow();
-               
-                foreach (var cell in row)
+                if (sheet.Dimension == null)
                 {
-                    newRow[cell.Start.Column - 1] = cell.Text;
+                    return dataTableRespondents;
                 }
 
-                if (!string.IsNullOrWhiteSpace(newRow["name"].ToString()) && !string.IsNullOrWhiteSpace(newRow["okpo"].ToString()) && !string.IsNullOrWhiteSpace(newRow["password"].ToString()))
+                //List<string> columnNames = new List<string>();
+
+                //int currentColumn = 1;
+
+                //зацикливаем все столбцы на листе и добавляем их в таблицу данных
+                //foreach (var cell in sheet.Cells[1, 1, 1, sheet.Dimension.End.Column])
+                //{
+                //    string columnName = cell.Text.Trim();
+                //    //проверьте, был ли предыдущий заголовок пустым, и добавьте его, если он был
+                //    if (cell.Start.Column != currentColumn)
+                //    {
+                //        columnNames.Add("Header_" + currentColumn);
+                //        dataTableRespondents.Columns.Add("Header_" + currentColumn);
+                //        currentColumn++;
+                //    }
+                //    //добавьте имя столбца в список для подсчета дубликатов
+                //    columnNames.Add(columnName);
+                //    //подсчитайте повторяющиеся имена столбцов и сделайте их уникальными, чтобы избежать исключения
+                //    //Столбец с именем "Имя" уже принадлежит этому DataTable.
+                //    int occurrences = columnNames.Count(x => x.Equals(columnName));
+                //    if (occurrences > 1)
+                //    {
+                //        columnName = columnName + "_" + occurrences;
+                //    }
+                //    //добавить столбец в таблицу данных
+                //    dataTableRespondents.Columns.Add(columnName);
+                //    currentColumn++;
+                //}
+                // начать добавлять содержимое файла Excel в таблицу данных
+
+
+                for (int i = 2; i <= sheet.Dimension.End.Row; i++)
                 {
-                    if (string.IsNullOrWhiteSpace(newRow["datecreate"].ToString()))
+                    var row = sheet.Cells[i, 1, i, sheet.Dimension.End.Column];
+                    DataRow newRow = dataTableRespondents.NewRow();
+
+                    foreach (var cell in row)
                     {
-                        newRow["datecreate"] = null;
+                        newRow[cell.Start.Column - 1] = cell.Text.Trim();
                     }
 
-                    dataTableRespondents.Rows.Add(newRow);
-                }                
+                    if (!string.IsNullOrWhiteSpace(newRow["name"].ToString()) && !string.IsNullOrWhiteSpace(newRow["okpo"].ToString()) && !string.IsNullOrWhiteSpace(newRow["password"].ToString()))
+                    {
+                        if (long.TryParse(newRow["okpo"].ToString(), out long result))
+                        {
+                            if (string.IsNullOrWhiteSpace(newRow["datecreate"].ToString()))
+                            {
+                                newRow["datecreate"] = null;
+                            }
+
+                            dataTableRespondents.Rows.Add(newRow);
+                        }
+                        else
+                        {
+                            loadResult.Add($"Значение ОКПО {newRow["okpo"]} не является числом");
+                        }
+                    }
+                }
+
+                ProtocolFileDB.ProtocolLoadFileToDB(loadResult);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
+            }          
 
             return dataTableRespondents;
         }
@@ -159,47 +179,47 @@ namespace Websbor_PasswordRespondents
 
             return package.GetAsByteArray();
         }
-        public DataTable LoadFile()
-        {
-            logger.Info("[Вызов метода LoadFile]");
+        //public DataTable LoadFile()
+        //{
+        //    logger.Info("[Вызов метода LoadFile]");
             
-            DataTable dataTable = new DataTable();
+        //    DataTable dataTable = new DataTable();
 
-            try
-            {
-                string fileExtension;
-                string filePath;
-                Func<string, DataTable> readFile = null;
-                System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog();
-                fileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
-                fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        //    try
+        //    {
+        //        string fileExtension;
+        //        string filePath;
+        //        Func<string, DataTable> readFile = null;
+        //        System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog();
+        //        fileDialog.Filter = "*.txt|*.txt|*.xlsx|*.xlsx";
+        //        fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-                if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    filePath = fileDialog.FileName;
-                    fileExtension = Path.GetExtension(filePath);
+        //        if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //        {
+        //            filePath = fileDialog.FileName;
+        //            fileExtension = Path.GetExtension(filePath);
 
-                    if (fileExtension == ".txt")
-                    {
-                        readFile = ReadTextFile;
-                    }
-                    else if (fileExtension == ".xlsx")
-                    {
-                        readFile = ExcelToDataTable;
-                    }
+        //            if (fileExtension == ".txt")
+        //            {
+        //                readFile = ReadTextToDataTable;
+        //            }
+        //            else if (fileExtension == ".xlsx")
+        //            {
+        //                readFile = ReadExcelToDataTable;
+        //            }
 
-                    dataTable = readFile?.Invoke(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message);
-            }
+        //            dataTable = readFile?.Invoke(filePath);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+        //        logger.Error(ex.Message);
+        //    }
 
-            return dataTable;
-        }
-        public DataTable ReadTextFile(string pathFile)
+        //    return dataTable;
+        //}
+        public DataTable ReadTextToDataTable(string pathFile)
         {
             logger.Info("[Вызов метода ReadTextFile]");
 
@@ -240,5 +260,7 @@ namespace Websbor_PasswordRespondents
 
             return datafileopen;
         }
+
+
     }
 }

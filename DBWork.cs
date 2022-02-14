@@ -204,6 +204,8 @@ namespace Websbor_PasswordRespondents
 
         public DataTable GetDataDB(string command)
         {
+            logger.Info("[Вызов метода GetDataDB]");
+
             DataTable dataTable;
 
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
@@ -217,25 +219,17 @@ namespace Websbor_PasswordRespondents
             return dataTable;
         }
 
-        public void LoadFileToDB(DataTable dataTable)
+        public void LoadDataFileToDB(DataTable dataTable)
         {
+            logger.Info("[Вызов метода LoadDataFileToDB]");
 
             int countExecuteRows = 0;
-            string sqlInsert = "INSERT INTO [Password] (name, okpo, password, datecreate, comment) VALUES (@name, @okpo, @password, @datecreate, @comment)";
+            string commandInsert = "INSERT INTO [Password] (name, okpo, password, datecreate, comment) VALUES (@name, @okpo, @password, @datecreate, @comment)";
             SqlCommand sqlCommand;
-            List<string> loadResult = new List<string>();
+            List<string> loadResult = new List<string>();   
 
             try
             {
-                for (int i = 0; i < dataTable.Rows.Count; i++) // проверить с какой строки начинается проверка
-                {
-                    if (!long.TryParse(dataTable.Rows[i]["okpo"].ToString().Trim(), out long result))
-                    {
-                        loadResult.Add($"Значение ОКПО: {dataTable.Rows[i]["okpo"]} не является числом");
-                        dataTable.Rows.RemoveAt(i);
-                    }
-                }
-
                 if (dataTable.Rows.Count > 0)
                 {
                     using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
@@ -245,7 +239,7 @@ namespace Websbor_PasswordRespondents
                         foreach (DataRow row in dataTable.Rows)
                         {
                             sqlCommand = sqlConnection.CreateCommand();
-                            sqlCommand.CommandText = sqlInsert;
+                            sqlCommand.CommandText = commandInsert;
                             sqlCommand.Parameters.AddWithValue("@name", row["name"]);
                             sqlCommand.Parameters.AddWithValue("@okpo", row["okpo"]);
                             sqlCommand.Parameters.AddWithValue("@password", row["password"]);
@@ -261,16 +255,10 @@ namespace Websbor_PasswordRespondents
                                 loadResult.Add($"ОКПО {row["okpo"]} не загружен: " + exSql.Message);
                             }
                         }
-                    }
-
-                    using (StreamWriter writeLoadProtocol = new StreamWriter(Environment.CurrentDirectory + @"\LoadProtocol.txt"))
-                    {
-                        foreach (var result in loadResult)
-                        {
-                            writeLoadProtocol.WriteLine(result);
-                        }
-                    }
+                    }                   
                 }
+
+                ProtocolFileDB.ProtocolLoadFileToDB(loadResult);
 
                 MessageBox.Show($"Загружено записей: {countExecuteRows} \nНе загружено записей: {loadResult.Count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -280,5 +268,6 @@ namespace Websbor_PasswordRespondents
                 logger.Error(ex.Message);
             }
         }
-    }
+    }    
 }
+

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Websbor_PasswordRespondents"
         mc:Ignorable="d"
-        Title="Учетки респондентов" Height="430" Width="737" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="CanResize" Loaded="Websbor_PasswordRespondents_Window_Loded">
+        Title="Учетки респондентов" Height="550" Width="750" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="CanResize" Loaded="Websbor_PasswordRespondents_Window_Loded">
     <Grid>
         <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
             <DataGrid.Resources>
