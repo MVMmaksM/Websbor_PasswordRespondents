@@ -5,31 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Websbor_PasswordRespondents"
         mc:Ignorable="d"
-        Title="Учетки респондентов" Height="550" Width="750" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="CanResize" Loaded="Websbor_PasswordRespondents_Window_Loded">
+        Title="Учетки респондентов" Height="650" Width="1000" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="CanResize" Loaded="Websbor_PasswordRespondents_Window_Loded">
     <Grid>
-        <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Margin="0,24,0,101" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="495*"/>
+            <ColumnDefinition Width="497*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Margin="0,24,0,118" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow" Grid.ColumnSpan="2">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#eb9534"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="150" FontSize="13" FontFamily="Times New Roman"/>
-                <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="13"/>
-                <DataGridTextColumn Header="Пароль" Binding="{Binding Path=password}" Width="120" FontFamily="Times New Roman" FontSize="13"/>
-                <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}"  Width="105" FontFamily="Times New Roman" FontSize="13" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Пользователь создавший запись" Binding="{Binding Path=usercreate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman"/>
-                <DataGridTextColumn Header="Дата изменения" Binding="{Binding Path=dateupdate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" IsReadOnly="True" Width="*" FontFamily="Times New Roman" FontSize="13"/>
-                <DataGridTextColumn Header="Пользователь изменивший запись" Binding="{Binding Path=userupdate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman"/>
-                <DataGridTextColumn Header="Примечание" Binding="{Binding Path=comment}" IsReadOnly="False" Width="*" FontFamily="Times New Roman"/>
+                <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="250" FontSize="13" FontFamily="Times New Roman"/>
+                <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105" FontFamily="Times New Roman" FontSize="14"/>
+                <DataGridTextColumn Header="Пароль" Binding="{Binding Path=password}" Width="120" FontFamily="Times New Roman" FontSize="14"/>
+                <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}"  Width="105" FontFamily="Times New Roman" FontSize="14" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Пользователь создавший запись" Binding="{Binding Path=usercreate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman" FontSize="14"/>
+                <DataGridTextColumn Header="Дата изменения" Binding="{Binding Path=dateupdate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" IsReadOnly="True" Width="*" FontFamily="Times New Roman" FontSize="14"/>
+                <DataGridTextColumn Header="Пользователь изменивший запись" Binding="{Binding Path=userupdate}" IsReadOnly="True" Width="*" FontFamily="Times New Roman" FontSize="14"/>
+                <DataGridTextColumn Header="Примечание" Binding="{Binding Path=comment}" IsReadOnly="False" Width="*" FontFamily="Times New Roman" FontSize="14"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GroupBox x:Name="GroupBoxSearch" Header="Поиск" Margin="0,0,10,30" HorizontalAlignment="Right" Width="363" Height="71" VerticalAlignment="Bottom">
+        <GroupBox x:Name="GroupBoxSearch" Header="Поиск" Margin="0,0,10,25" Height="86" VerticalAlignment="Bottom" Grid.Column="1">
             <Grid>
-                <TextBox x:Name="TxtBoxSearch" VerticalContentAlignment="Center" Height="20" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" HorizontalAlignment="Left" Width="331" Margin="10,0,0,0" KeyDown="TxtBoxSearch_KeyDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="187*"/>
+                    <ColumnDefinition Width="98*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="TxtBoxSearch" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="7,0,7,0" KeyDown="TxtBoxSearch_KeyDown" Grid.ColumnSpan="2">
                     <TextBox.Effect>
                         <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
                     </TextBox.Effect>
                 </TextBox>
-                <Button x:Name="ButtonSearch" Content="Найти" VerticalAlignment="Center"  Click="ButtonSearch_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="266,25,0,3" HorizontalAlignment="Left" Width="75">
+                <Button x:Name="ButtonSearch" Content="Найти"  Click="ButtonSearch_Click" FontFamily="Constantia" Background="#FFF0F0F0" Margin="5,30,7,0" Height="26" VerticalAlignment="Top" Grid.Column="1">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -39,11 +47,11 @@
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
-                <RadioButton x:Name="RadioButtonOKPO" Content="ОКПО" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
-                <RadioButton x:Name="RadioButtonName" Content="Наименование" HorizontalAlignment="Left" Margin="79,28,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
+                <RadioButton x:Name="RadioButtonOKPO" Content="ОКПО" Margin="7,37,0,0" VerticalAlignment="Top" FontFamily="Constantia" Height="16" FontSize="13" HorizontalAlignment="Left" Width="60"/>
+                <RadioButton x:Name="RadioButtonName" Content="Наименование" Margin="77,37,0,0" FontFamily="Constantia" Height="16" VerticalAlignment="Top" FontSize="13"/>
             </Grid>
         </GroupBox>
-        <Menu Height="24" VerticalAlignment="Top" Background="#FFF0F0F0" FontFamily="Constantia">
+        <Menu Height="24" VerticalAlignment="Top" Background="#FFF0F0F0" FontFamily="Constantia" RenderTransformOrigin="0.509,0.458" Grid.ColumnSpan="2">
             <MenuItem x:Name="MenuFile" Header="Файл" Height="24" Width="42">
                 <MenuItem Header="Загрузить записи" Click="MenuItemLoad_Click"/>
                 <MenuItem Header="Загрузить каталог web-сбора" Click="MenuItemLoadWebSbor_Click" IsEnabled="False"/>
@@ -67,9 +75,13 @@
             <MenuItem Header="Настройки" Click="MenuItemOpenSettings_Click">
             </MenuItem>
         </Menu>
-        <GroupBox x:Name="GroupBoxRedact" Header="Редактирование" HorizontalAlignment="Left" Margin="10,0,0,30" Width="343" Height="71" VerticalAlignment="Bottom">
+        <GroupBox x:Name="GroupBoxRedact" Header="Редактирование" Margin="10,0,2,25" Height="86" VerticalAlignment="Bottom">
             <Grid>
-                <Button x:Name="ButtonUpdate" Content="Сохранить" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Constantia" Width="75" Click="ButtonUpdate_Click" Height="20" Background="#FFF0F0F0" Margin="10,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="141*"/>
+                    <ColumnDefinition Width="140*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="ButtonUpdate" Content="Сохранить" VerticalAlignment="Top" FontFamily="Constantia" Click="ButtonUpdate_Click" Height="25" Background="#FFF0F0F0" Margin="7,1,7,0">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -79,7 +91,7 @@
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
-                <Button x:Name="ButtonGetAllData" Content="Показать все записи" HorizontalAlignment="Left" VerticalAlignment="Top" Width="129" Click="ButtonGetAllData_Click" Height="20" FontFamily="Constantia" Background="#FFF0F0F0" Margin="130,0,0,0">
+                <Button x:Name="ButtonGetAllData" Content="Показать все записи" Click="ButtonGetAllData_Click" FontFamily="Constantia" Background="#FFF0F0F0" Margin="7,1,7,0" Grid.Column="1" Height="25" VerticalAlignment="Top">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -89,7 +101,7 @@
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
-                <Button x:Name="ButtonDelete" Content="Удалить" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="ButtonDelete_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="10,28,0,0">
+                <Button x:Name="ButtonDelete" Content="Удалить" VerticalAlignment="Top" Click="ButtonDelete_Click" FontFamily="Constantia" Height="25" Background="#FFF0F0F0" Margin="7,32,7,0">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -99,7 +111,7 @@
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
-                <Button x:Name="ButtonClearDataGrid" Content="Очистить список" HorizontalAlignment="Left" VerticalAlignment="Top" Width="129" Click="ButtonClearDatagrid_Click" FontFamily="Constantia" Height="20" Background="#FFF0F0F0" Margin="130,28,0,0">
+                <Button x:Name="ButtonClearDataGrid" Content="Очистить список" VerticalAlignment="Top" Click="ButtonClearDatagrid_Click" FontFamily="Constantia" Height="25" Background="#FFF0F0F0" Margin="7,32,7,0" Grid.Column="1">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -111,7 +123,7 @@
                 </Button>
             </Grid>
         </GroupBox>
-        <StatusBar Height="20" VerticalAlignment="Bottom">           
+        <StatusBar Height="20" VerticalAlignment="Bottom" Grid.ColumnSpan="2">
         </StatusBar>
     </Grid>
 </Window>

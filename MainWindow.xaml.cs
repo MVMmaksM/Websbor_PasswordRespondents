@@ -44,9 +44,8 @@ namespace Websbor_PasswordRespondents
             dgDataPasswords.CanUserResizeRows = Convert.ToBoolean(allAppSettings["CanUserResizeRows"]);
             dgDataPasswords.CanUserResizeColumns = Convert.ToBoolean(allAppSettings["CanUserResizeColumns"]);
             dgDataPasswords.CanUserReorderColumns = Convert.ToBoolean(allAppSettings["CanUserReorderColumns"]);
-            version = Assembly.GetExecutingAssembly().GetName().Version;
+            version = Assembly.GetExecutingAssembly().GetName().Version;         
             this.Title += $" (Version {version.Major}.{version.Minor} [build {version.Build}])";
-
         }
         private void Websbor_PasswordRespondents_Window_Loded(object sender, RoutedEventArgs e)
         {
