@@ -34,7 +34,7 @@ namespace Websbor_PasswordRespondents
             connectionStringSettings = ConfigurationManager.ConnectionStrings["DefaultConnection"];
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionStringSettings.ConnectionString);
             TxtBoxProviderName.Text = connectionStringSettings.ProviderName;
-            TxtBoxConStrSetName.Content = connectionStringSettings.Name;
+            TxtBoxConStrSetName.Text = connectionStringSettings.Name;
             TxtBoxDataSorce.Text = sqlConnectionStringBuilder.DataSource;
             TxtBoxInitCatalog.Text = sqlConnectionStringBuilder.InitialCatalog;
             CmBxIntegratredSecurity.Text = sqlConnectionStringBuilder.IntegratedSecurity.ToString();

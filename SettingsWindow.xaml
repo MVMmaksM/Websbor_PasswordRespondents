@@ -17,8 +17,8 @@
                     <Label HorizontalAlignment="Left" Margin="10,10,0,0" Content="Name Connection String Settings" VerticalAlignment="Top" Width="189" Height="26" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="TxtBoxDataSorce" HorizontalAlignment="Left" Height="26" Margin="204,41,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="TxtBoxInitCatalog" HorizontalAlignment="Left" Height="26" Margin="204,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
-                    <TextBox x:Name="TxtBoxProviderName" HorizontalAlignment="Left" Height="26" Margin="204,134,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
-                    <Label x:Name="TxtBoxConStrSetName" HorizontalAlignment="Left" Height="26" Margin="204,10,0,0"  Content="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="TxtBoxProviderName" HorizontalAlignment="Left" Height="26" Margin="204,134,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center" IsEnabled="False"/>
+                    <TextBox x:Name="TxtBoxConStrSetName" HorizontalAlignment="Left" Height="26" Margin="204,10,0,0"  Text="" VerticalAlignment="Top" Width="265" VerticalContentAlignment="Center" IsEnabled="False"/>
                     <ComboBox Name="CmBxIntegratredSecurity" Margin="204,104,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="265">
                         <TextBlock>True</TextBlock>
                         <TextBlock>False</TextBlock>
@@ -44,9 +44,9 @@
                     </ComboBox>
                     <TextBlock x:Name="TxtBl" HorizontalAlignment="Left" Margin="80,209,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="77"/>
                 </Grid>
-            </TabItem>           
+            </TabItem>
         </TabControl>
-        <Button x:Name="Btn_SaveSettings" Content="Сохранить" Margin="0,0,330,34" Click="Btn_SaveSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
+        <Button x:Name="Btn_SaveSettings" Content="Сохранить" Margin="40,0,300,34" Click="Btn_SaveSettings_Click" Height="25" VerticalAlignment="Bottom" Background="#FFF0F0F0" FontFamily="Constantia">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="2"/>
@@ -56,7 +56,7 @@
                 <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
             </Button.Effect>
         </Button>
-        <Button x:Name="Btn_CancelSettings" Content="Отмена" Margin="304,0,0,34" Click="Btn_CancelSettings_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="75" Background="#FFF0F0F0" FontFamily="Constantia">
+        <Button x:Name="Btn_CancelSettings" Content="Отмена" Margin="304,0,40,34" Click="Btn_CancelSettings_Click" Height="25" VerticalAlignment="Bottom" Background="#FFF0F0F0" FontFamily="Constantia">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="2"/>
