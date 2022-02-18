@@ -102,9 +102,10 @@ namespace Websbor_PasswordRespondents
                 }
                 catch (DBConcurrencyException exConcurrency)
                 {
-                    MessageBox.Show(exConcurrency.Message + "\nВозможно запись удалена другим пользователем", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);                    
+                    MessageBox.Show(exConcurrency.Message + "\nВозможно запись удалена другим пользователем \nНеобходимо обновить данные", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                    logger.Error(exConcurrency.Message + exConcurrency.StackTrace);
                 }
-                
+
             }
             catch (Exception ex)
             {
