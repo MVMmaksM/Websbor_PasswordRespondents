@@ -27,7 +27,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <GroupBox x:Name="GroupBoxSearch" Header="Поиск" Margin="0,0,10,25" Height="86" VerticalAlignment="Bottom" Grid.Column="1">
-            <Grid>
+            <Grid UseLayoutRounding="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="187*"/>
                     <ColumnDefinition Width="98*"/>
@@ -76,7 +76,7 @@
             </MenuItem>
         </Menu>
         <GroupBox x:Name="GroupBoxRedact" Header="Редактирование" Margin="10,0,2,25" Height="86" VerticalAlignment="Bottom">
-            <Grid>
+            <Grid UseLayoutRounding="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="141*"/>
                     <ColumnDefinition Width="140*"/>

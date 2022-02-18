@@ -94,8 +94,17 @@ namespace Websbor_PasswordRespondents
             {
                 SqlCommandBuilder comandbuilder = new SqlCommandBuilder(sqlDataAdapter);
                 comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;
-                //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();                
-                sqlDataAdapter.Update(tableRespondents);
+                //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();
+
+                try
+                {
+                    sqlDataAdapter.Update(tableRespondents);
+                }
+                catch (DBConcurrencyException exConcurrency)
+                {
+                    MessageBox.Show(exConcurrency.Message + "\nВозможно запись удалена другим пользователем", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);                    
+                }
+                
             }
             catch (Exception ex)
             {
