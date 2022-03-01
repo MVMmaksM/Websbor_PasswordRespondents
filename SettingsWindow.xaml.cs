@@ -47,6 +47,7 @@ namespace Websbor_PasswordRespondents
 
         private void Btn_SaveSettings_Click(object sender, RoutedEventArgs e)
         {
+          
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder();
             sqlConnectionStringBuilder.DataSource = TxtBoxDataSorce.Text;
             sqlConnectionStringBuilder.InitialCatalog = TxtBoxInitCatalog.Text;

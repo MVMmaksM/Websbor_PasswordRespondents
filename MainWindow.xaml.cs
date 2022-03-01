@@ -324,20 +324,19 @@ namespace Websbor_PasswordRespondents
         private void MenuItemShemaEcxel_Click(object sender, RoutedEventArgs e)
         {
             FileRespondents excelShema;
-            Microsoft.Win32.SaveFileDialog saveFileDialog;
+            System.Windows.Forms.SaveFileDialog saveFileDialog;
 
             try
             {
                 excelShema = new FileRespondents();
                 var shema = excelShema.ShemaExcelToDB();
 
-                saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog = new System.Windows.Forms.SaveFileDialog();
                 saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 saveFileDialog.Filter = "|*.xlsx";
-                saveFileDialog.FileName = "Шаблон загрузки";
-                bool? result = saveFileDialog.ShowDialog();
+                saveFileDialog.FileName = "Шаблон загрузки";               
 
-                if (result == true)
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     File.WriteAllBytes(saveFileDialog.FileName, shema);
 
