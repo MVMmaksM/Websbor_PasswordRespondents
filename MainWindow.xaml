@@ -16,7 +16,7 @@
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#eb9534"/>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Наименование" Binding="{Binding Path=name}" Width="250" />
+                <DataGridTextColumn Header="Наименование1" Binding="{Binding Path=name}" Width="250" />
                 <DataGridTextColumn Header="ОКПО" Binding="{Binding Path=okpo}" Width="105"/>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Path=password}" Width="120"/>
                 <DataGridTextColumn Header="Дата создания" Binding="{Binding Path=datecreate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}"  Width="105" IsReadOnly="True"/>
