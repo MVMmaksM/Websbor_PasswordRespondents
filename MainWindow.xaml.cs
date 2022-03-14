@@ -273,40 +273,46 @@ namespace Websbor_PasswordRespondents
 
         private void MenuItemSaveCurrentData_Click(object sender, RoutedEventArgs e)
         {
-            //SaveFileDialog saveFileDialog;
-            //FileRespondents fileRespondents;
+            System.Windows.Forms.SaveFileDialog saveFileDialog;
+            FileRespondents fileRespondents;
+            DataTable dataTable;
 
-            //try
-            //{
-            //    if (tableRespondents.Rows.Count > 0)
-            //    {
-            //        fileRespondents = new FileRespondents();
-            //        //tableRespondents.Columns.RemoveAt(0);
-            //        var file = fileRespondents.DataTableToEcxel(tableRespondents);
+            try
+            {              
+                if (dataBaseWork.tableRespondents.Rows.Count!=0)
+                {
+                    fileRespondents = new FileRespondents();
 
+                    dataTable = dataBaseWork.tableRespondents.Copy();
+                    dataTable.PrimaryKey = null;
+                    dataTable.Columns.Remove("ID");
+                    dataTable.Columns.Remove("usercreate"); // переделать
+                    dataTable.Columns.Remove("dateupdate");
+                    dataTable.Columns.Remove("userupdate");
+                    var file = fileRespondents.DataTableToExcel(dataTable);
 
-            //        saveFileDialog = new SaveFileDialog();
-            //        saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            //        saveFileDialog.Filter = "|*.xlsx";
-            //        saveFileDialog.FileName = "Список респондентов";
+                    saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+                    saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    saveFileDialog.Filter = "|*.xlsx";
+                    saveFileDialog.FileName = "Список респондентов";
 
-            //        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            //        {
-            //            File.WriteAllBytes(saveFileDialog.FileName, file);
+                    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        File.WriteAllBytes(saveFileDialog.FileName, file);
 
-            //            System.Windows.MessageBox.Show($"Сохранено записей: {tableRespondents.Rows.Count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        System.Windows.MessageBox.Show("Список пуст", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    System.Windows.MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-            //    logger.Error(ex.Message);
-            //}
+                        MessageBox.Show($"Сохранено записей: {dataTable.Rows.Count}", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Нет записей для сохранения", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }              
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
+            }           
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)

@@ -56,7 +56,7 @@
                 <MenuItem Header="Загрузить записи" Click="MenuItemLoad_Click"/>
                 <MenuItem Header="Загрузить каталог web-сбора" Click="MenuItemLoadWebSbor_Click" IsEnabled="False"/>
                 <MenuItem Header="Сохранить все записи в файл" Click="MenuItemSaveAllData_Click"/>
-                <MenuItem Header="Сохранить текущие записи в файл" Click="MenuItemSaveCurrentData_Click" IsEnabled="False"/>
+                <MenuItem Header="Сохранить текущие записи в файл" Click="MenuItemSaveCurrentData_Click" IsEnabled="True"/>
                 <MenuItem Header="Шаблон загрузки из Excel" Click="MenuItemShemaEcxel_Click"/>
             </MenuItem>
             <MenuItem x:Name="MenuDB"  Header="БД">
