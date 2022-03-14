@@ -294,7 +294,7 @@ namespace Websbor_PasswordRespondents
                     saveFileDialog = new System.Windows.Forms.SaveFileDialog();
                     saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                     saveFileDialog.Filter = "|*.xlsx";
-                    saveFileDialog.FileName = "Список респондентов";
+                    saveFileDialog.FileName = "Список выбранных респондентов";
 
                     if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
