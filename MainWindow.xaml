@@ -8,8 +8,8 @@
         Title="Учетки респондентов" Height="650" Width="1000" MinWidth="620" MinHeight="420" Background="#FFAAA9A9" Topmost="False" WindowStartupLocation="CenterScreen" Closed="Window_Closed" ResizeMode="CanResize" Loaded="Websbor_PasswordRespondents_Window_Loded">
     <Grid UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="495*"/>
-            <ColumnDefinition Width="497*"/>
+            <ColumnDefinition Width="311*"/>
+            <ColumnDefinition Width="681*"/>
         </Grid.ColumnDefinitions>
         <DataGrid x:Name="dgDataPasswords" AutoGenerateColumns="False" Margin="0,24,0,118" Background="#FFE2E2E2" VerticalGridLinesBrush="#FFAAA9A9" HorizontalGridLinesBrush="#FFAAA9A9" BorderBrush="#FF595954" LoadingRow="dgDataPasswords_LoadingRow" Grid.ColumnSpan="2" FontSize="14" FontFamily="Times New Roman">
             <DataGrid.Resources>
@@ -27,17 +27,47 @@
             </DataGrid.Columns>
         </DataGrid>
         <GroupBox x:Name="GroupBoxSearch" Header="Поиск" Margin="0,0,10,25" Height="86" VerticalAlignment="Bottom" Grid.Column="1" FontFamily="Constantia">
-            <Grid>
+            <Grid x:Name="GridSearch">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="187*"/>
-                    <ColumnDefinition Width="98*"/>
+                    <ColumnDefinition Width="329*"/>
+                    <ColumnDefinition Width="330*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="TxtBoxSearch" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="7,0,7,0" KeyDown="TxtBoxSearch_KeyDown" Grid.ColumnSpan="2" FontFamily="Times New Row" FontSize="14">
+                <TextBox x:Name="name" Style="{StaticResource placeHolder}" Tag="Наименование" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="7,0,211,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14">
                     <TextBox.Effect>
                         <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
                     </TextBox.Effect>
                 </TextBox>
-                <Button x:Name="ButtonSearch" Content="Найти"  Click="ButtonSearch_Click"  Background="#FFF0F0F0" Margin="5,30,7,0" Height="26" VerticalAlignment="Top" Grid.Column="1">
+                <TextBox x:Name="okpo" Style="{StaticResource placeHolder}" Tag="ОКПО" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="7,31,211,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14">
+                    <TextBox.Effect>
+                        <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
+                    </TextBox.Effect>
+                </TextBox>
+                <TextBox x:Name="usercreate" Style="{StaticResource placeHolder}" Tag="Пользователь создавший запись"  VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="123,0,105,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14">
+                    <TextBox.Effect>
+                        <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
+                    </TextBox.Effect>
+                </TextBox>
+                <TextBox x:Name="datecreate" Style="{StaticResource placeHolder}" Tag="Дата создания" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="123,31,105,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14">
+                    <TextBox.Effect>
+                        <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
+                    </TextBox.Effect>
+                </TextBox>
+                <TextBox x:Name="dateupdate" Style="{StaticResource placeHolder}" Tag="Дата изменения" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="229,0,329,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14" Grid.ColumnSpan="2">
+                    <TextBox.Effect>
+                        <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
+                    </TextBox.Effect>
+                </TextBox>
+                <TextBox x:Name="userupdate" Style="{StaticResource placeHolder}" Tag="Пользователь изменивший" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="229,31,329,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14" Grid.ColumnSpan="2">
+                    <TextBox.Effect>
+                        <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
+                    </TextBox.Effect>
+                </TextBox>
+                <TextBox x:Name="comment" Style="{StaticResource placeHolder}" Tag="Примечание" VerticalContentAlignment="Center" Height="25" TextWrapping="Wrap" Text="" VerticalAlignment="Top" BorderBrush="#FF666666" Margin="6,0,223,0" KeyDown="TxtBoxSearch_KeyDown" FontFamily="Times New Row" FontSize="14" Grid.Column="1">
+                    <TextBox.Effect>
+                        <DropShadowEffect Color="Black" Direction="285" ShadowDepth="2" Opacity="0.6"/>
+                    </TextBox.Effect>
+                </TextBox>
+                <Button x:Name="ButtonSearch" Content="Найти"  Click="ButtonSearch_Click"  Background="#FFF0F0F0" Margin="256,30,7,0" Height="26" VerticalAlignment="Top" Grid.Column="1">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="2"/>
@@ -47,8 +77,6 @@
                         <DropShadowEffect Color="Black" Direction="290" ShadowDepth="3" Opacity="0.6"/>
                     </Button.Effect>
                 </Button>
-                <RadioButton x:Name="RadioButtonOKPO" Content="ОКПО" Margin="7,37,0,0" VerticalAlignment="Top" Height="16" FontSize="13" HorizontalAlignment="Left" Width="60"/>
-                <RadioButton x:Name="RadioButtonName" Content="Наименование" Margin="77,37,0,0" Height="16" VerticalAlignment="Top" FontSize="13"/>
             </Grid>
         </GroupBox>
         <Menu Height="24" VerticalAlignment="Top" Background="#FFF0F0F0" FontFamily="Constantia" RenderTransformOrigin="0.509,0.458" Grid.ColumnSpan="2">
@@ -66,6 +94,10 @@
             </MenuItem>
             <MenuItem x:Name="MenuAdmUser"  Header="Администрирование">
                 <MenuItem Header="Добавить пользователя" Click="MenuItemAddUser_Click"/>
+            </MenuItem>
+            <MenuItem Header="Протокол">
+                <MenuItem Header="Открыть" Click="MenuItemOpenProtocol_Click"/>
+                <MenuItem Header="Показать в папке" Click="MenuItemOpenDirectoryProtocol_Click"/>
             </MenuItem>
             <MenuItem Header="Логи">
                 <MenuItem Header="Открыть текущий log-файл" Click="MenuItemOPenLog_Click"/>

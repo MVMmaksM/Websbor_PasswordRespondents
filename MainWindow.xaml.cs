@@ -44,11 +44,13 @@ namespace Websbor_PasswordRespondents
             dgDataPasswords.CanUserResizeRows = Convert.ToBoolean(allAppSettings["CanUserResizeRows"]);
             dgDataPasswords.CanUserResizeColumns = Convert.ToBoolean(allAppSettings["CanUserResizeColumns"]);
             dgDataPasswords.CanUserReorderColumns = Convert.ToBoolean(allAppSettings["CanUserReorderColumns"]);
-            version = Assembly.GetExecutingAssembly().GetName().Version;         
-            this.Title += $" (Version {version.Major}.{version.Minor} [build {version.Build}])";
+            version = Assembly.GetExecutingAssembly().GetName().Version;
+            this.Title += $" v{version.Major}.{version.Minor} [build {version.Build}]";
         }
         private void Websbor_PasswordRespondents_Window_Loded(object sender, RoutedEventArgs e)
         {
+            ProtocolFileDB.CreateDirectoryProtocol();
+
             dataBaseWork = new DBWork(connectionString);
 
             if (dataBaseWork.DbUserExist())
@@ -105,15 +107,20 @@ namespace Websbor_PasswordRespondents
 
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
+            string search = dataBaseWork.CreateStringSeaarch(GridSearch.Children.OfType<TextBox>());
+            if (search != null)
+            {
+                dataBaseWork.GetDataDBtoTableRespondents($"SELECT * FROM[Password] WHERE {search}");
+            }
 
-            if (RadioButtonOKPO.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
-            {
-                dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
-            }
-            else if (RadioButtonName.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
-            {
-                dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
-            }
+            //if (RadioButtonOKPO.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
+            //{
+            //    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+            //}
+            //else if (RadioButtonName.IsChecked == true & !string.IsNullOrWhiteSpace(TxtBoxSearch.Text))
+            //{
+            //    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
+            //}
         }
 
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
@@ -138,7 +145,7 @@ namespace Websbor_PasswordRespondents
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
             try
-            {               
+            {
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     filePath = openFileDialog.FileName;
@@ -162,7 +169,8 @@ namespace Websbor_PasswordRespondents
                     }
                     else if (tableRespondentsFromFile.Rows.Count == 0)
                     {
-                        MessageBox.Show("Нет данных для загрузки \nСмотри протокол загрузки ", "Внимание", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                        if (MessageBox.Show("Нет данных для загрузки \nОткрыть протокол? ", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                            Process.Start(ProtocolFileDB.pathProtocolFile + ProtocolFileDB.fileNameProtocol);
                     }
                 }
             }
@@ -182,7 +190,7 @@ namespace Websbor_PasswordRespondents
         {
             System.Windows.Forms.SaveFileDialog saveFileDialog;
             FileRespondents fileRespondents;
-            DataTable dataTable; 
+            DataTable dataTable;
 
             try
             {
@@ -208,7 +216,7 @@ namespace Websbor_PasswordRespondents
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message);
             }
-        }     
+        }
 
         private void MenuItemOPenLog_Click(object sender, RoutedEventArgs e)
         {
@@ -259,15 +267,21 @@ namespace Websbor_PasswordRespondents
         private void TxtBoxSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
-            {
-                if (RadioButtonOKPO.IsChecked == true)
-                {
-                    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+            {               
+                string search = dataBaseWork.CreateStringSeaarch(GridSearch.Children.OfType<TextBox>());
+                if (search!=null)
+                {                
+                    dataBaseWork.GetDataDBtoTableRespondents($"SELECT * FROM[Password] WHERE {search}");
                 }
-                else if (RadioButtonName.IsChecked == true)
-                {
-                    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
-                }
+
+                //if (RadioButtonOKPO.IsChecked == true)
+                //{
+                //    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE okpo LIKE '%{TxtBoxSearch.Text}%'");
+                //}
+                //else if (RadioButtonName.IsChecked == true)
+                //{
+                //    dataBaseWork.GetDataDBtoTableRespondents($"SELECT* FROM[Password] WHERE name LIKE '%{TxtBoxSearch.Text}%'");
+                //}
             }
         }
 
@@ -278,8 +292,8 @@ namespace Websbor_PasswordRespondents
             DataTable dataTable;
 
             try
-            {              
-                if (dataBaseWork.tableRespondents.Rows.Count!=0)
+            {
+                if (dataBaseWork.tableRespondents.Rows.Count != 0)
                 {
                     fileRespondents = new FileRespondents();
 
@@ -306,13 +320,13 @@ namespace Websbor_PasswordRespondents
                 else
                 {
                     MessageBox.Show("Нет записей для сохранения", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }              
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 logger.Error(ex.Message);
-            }           
+            }
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
@@ -340,7 +354,7 @@ namespace Websbor_PasswordRespondents
                 saveFileDialog = new System.Windows.Forms.SaveFileDialog();
                 saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 saveFileDialog.Filter = "|*.xlsx";
-                saveFileDialog.FileName = "Шаблон загрузки";               
+                saveFileDialog.FileName = "Шаблон загрузки";
 
                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
@@ -369,6 +383,46 @@ namespace Websbor_PasswordRespondents
             if (dataBaseWork.tableRespondents.Rows.Count != 0)
             {
                 dataBaseWork.tableRespondents.Clear();
+            }
+        }
+
+        private void MenuItemOpenProtocol_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (Directory.Exists(ProtocolFileDB.pathProtocolFile) & File.Exists(ProtocolFileDB.pathProtocolFile + ProtocolFileDB.fileNameProtocol))
+                {
+                    Process.Start(ProtocolFileDB.pathProtocolFile + ProtocolFileDB.fileNameProtocol);
+                }
+                else
+                {
+                    //MessageBox.Show("Протокол отсутствует", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
+            }
+        }
+
+        private void MenuItemOpenDirectoryProtocol_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (Directory.Exists(ProtocolFileDB.pathProtocolFile))
+                {
+                    Process.Start(ProtocolFileDB.pathProtocolFile);
+                }
+                else
+                {
+                    MessageBox.Show("Не найдена директория хранения протокола", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(ex.Message);
             }
         }
     }

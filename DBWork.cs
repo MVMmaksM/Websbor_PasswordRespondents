@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Websbor_PasswordRespondents
 {
@@ -53,10 +54,8 @@ namespace Websbor_PasswordRespondents
                 }
             }
             catch (Exception ex)
-            {
-                MessageBox.Show($"При подключении к dbo.Users возникла ошибка: {ex.Message} \n\nсм. log-файл ", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message + ex.StackTrace);
-
+            {              
+                DBHandleException(ex);
                 return false;
             }
         }
@@ -96,21 +95,12 @@ namespace Websbor_PasswordRespondents
                 comandbuilder.ConflictOption = ConflictOption.OverwriteChanges;
                 //tableRespondents = tableRespondents.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();
 
-                try
-                {
-                    sqlDataAdapter.Update(tableRespondents);
-                }
-                catch (DBConcurrencyException exConcurrency)
-                {
-                    MessageBox.Show(exConcurrency.Message + "\nВозможно запись удалена другим пользователем \nНеобходимо обновить данные", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                    logger.Error(exConcurrency.Message + exConcurrency.StackTrace);
-                }
+                sqlDataAdapter.Update(tableRespondents);
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                logger.Error(ex.Message + ex.StackTrace);
+                DBHandleException(ex);
             }
             finally
             {
@@ -141,12 +131,12 @@ namespace Websbor_PasswordRespondents
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar, 100, "name"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
-                sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@dateupdate", SqlDbType.DateTime, 0, "dateupdate"));
+                sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@dateupdate", SqlDbType.NVarChar, 50, "dateupdate"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@userupdate", SqlDbType.NVarChar, 50, "userupdate"));
                 sqlDataAdapter.InsertCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
                 parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
                 parameter.Direction = ParameterDirection.Output;
-                parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.DateTime, 0, "datecreate");
+                parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@datecreate", SqlDbType.NVarChar, 50, "datecreate");
                 parameter.Direction = ParameterDirection.Output;
                 parameter = sqlDataAdapter.InsertCommand.Parameters.Add("@usercreate", SqlDbType.NVarChar, 50, "usercreate");
                 parameter.Direction = ParameterDirection.Output;
@@ -157,7 +147,7 @@ namespace Websbor_PasswordRespondents
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@okpo", SqlDbType.NVarChar, 15, "okpo"));
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar, 15, "password"));
                 sqlDataAdapter.UpdateCommand.Parameters.Add(new SqlParameter("@comment", SqlDbType.NVarChar, 100, "comment"));
-                parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@dateupdate", SqlDbType.DateTime, 0, "dateupdate");
+                parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@dateupdate", SqlDbType.NVarChar, 50, "dateupdate");
                 parameter.Direction = ParameterDirection.Output;
                 parameter = sqlDataAdapter.UpdateCommand.Parameters.Add("@userupdate", SqlDbType.NVarChar, 50, "userupdate");
                 parameter.Direction = ParameterDirection.Output;
@@ -236,7 +226,7 @@ namespace Websbor_PasswordRespondents
             int countExecuteRows = 0;
             string commandInsert = "INSERT INTO [Password] (name, okpo, password, datecreate, comment) VALUES (@name, @okpo, @password, @datecreate, @comment)";
             SqlCommand sqlCommand;
-            List<string> loadResult = new List<string>();   
+            List<string> loadResult = new List<string>();
 
             try
             {
@@ -265,7 +255,7 @@ namespace Websbor_PasswordRespondents
                                 loadResult.Add($"ОКПО {row["okpo"]} не загружен: " + exSql.Message);
                             }
                         }
-                    }                   
+                    }
                 }
 
                 ProtocolFileDB.ProtocolLoadFileToDB(loadResult);
@@ -274,9 +264,78 @@ namespace Websbor_PasswordRespondents
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                DBHandleException(ex);            
                 logger.Error(ex.Message);
             }
+        }
+
+        private void DBHandleException(Exception ex)
+        {
+            if (ex is DBConcurrencyException exConcurrency)
+            {
+                MessageBox.Show("\nВозможно сохраняемая запись удалена другим пользователем \nНеобходимо обновить данные", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                logger.Error(exConcurrency.Message + exConcurrency.StackTrace);
+
+                return;
+            }
+            else if (ex is SqlException sqlException)
+            {
+                switch (sqlException.Number)
+                {
+                    case 2627:
+                        MessageBox.Show($"Добавляемая записиь уже существует в БД!", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                        logger.Error(sqlException.Message + sqlException.StackTrace);
+                        return;
+
+                    case 4060:
+                        MessageBox.Show($"Заправшиваемая БД не найдена \nПроверьте имя БД в настройках и повторите вход!", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                        logger.Error(sqlException.Message + sqlException.StackTrace);
+                        return;
+
+                    case 53:
+                        MessageBox.Show($"При соединении с сервером произошла ошибка. \nПроверьте имя сервера в настройках и убедитесь что в параметрах SQL Server по умолчанию не запрещены удаленные соединения!", "Ошибка", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                        logger.Error(sqlException.Message + sqlException.StackTrace);
+                        return;
+                }
+            }
+
+            MessageBox.Show(ex.Message, "Необработанное исключение", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+            logger.Error(ex.Message + ex.StackTrace);
+        }
+
+        public string CreateStringSeaarch(IEnumerable<TextBox> constrolSearchTextBox) 
+        {
+            string search = null;
+            List<Search> listSearch = new List<Search>();
+
+            foreach (var textBox in constrolSearchTextBox)
+            {
+                if (!string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    listSearch.Add(new Search() { nameTextBox = textBox.Name, valueTextBox = textBox.Text });
+                }
+            }
+
+            if (listSearch.Count == 1)
+            {
+                search = $"{listSearch[0].nameTextBox} LIKE '%{listSearch[0].valueTextBox.Trim()}%'";
+            }
+            else if (listSearch.Count > 1)
+            {
+                for (int i = 0; i < listSearch.Count; i++)
+                {
+                    if (i == listSearch.Count - 1)
+                    {
+                        search += $"{listSearch[i].nameTextBox} LIKE '%{listSearch[i].valueTextBox.Trim()}%'";
+                    }
+                    else
+                    {
+                        search += $"{listSearch[i].nameTextBox} LIKE '%{listSearch[i].valueTextBox.Trim()}%' AND ";
+                    }
+                }
+            }
+
+            return search;
         }
     }    
 }

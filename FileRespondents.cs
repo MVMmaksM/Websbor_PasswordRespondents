@@ -117,7 +117,7 @@ namespace Websbor_PasswordRespondents
                         newRow[cell.Start.Column - 1] = cell.Text.Trim();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(newRow["name"].ToString()) && !string.IsNullOrWhiteSpace(newRow["okpo"].ToString()) && !string.IsNullOrWhiteSpace(newRow["password"].ToString()))
+                    if (!string.IsNullOrWhiteSpace(newRow["name"].ToString()) && !string.IsNullOrWhiteSpace(newRow["okpo"].ToString()))
                     {
                         if (long.TryParse(newRow["okpo"].ToString(), out long result))
                         {
